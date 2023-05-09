@@ -1,7 +1,8 @@
+import React, { useState } from 'react';
 import { Box, Button, FormControl, FormErrorMessage, FormLabel, Input, Stack } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { auth } from "../app/firebase";
-import {signInWithEmailAndPassword} from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import AuthDetails from '@/app/AuthDetails';
 import router, { useRouter } from 'next/router';
 
@@ -13,17 +14,20 @@ const LoginPage = () => {
     formState: { errors },
   } = useForm();
 
+  const [loginError, setLoginError] = useState('');
+
   const onSubmit = (data: any) => {
     const { email, password } = data;
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        console.log(userCredential)
+        console.log(userCredential);
         router.push('/profile');
-      }).catch((error) => {
-        console.log(error)
       })
+      .catch((error) => {
+        console.log(error);
+        setLoginError('Invalid credentials. Please try again.'); // Set the error message
+      });
   };
-  
 
   return (
     <Box
@@ -39,21 +43,33 @@ const LoginPage = () => {
           <Stack spacing={4}>
             <FormControl isInvalid={!!errors.email} isRequired>
               <FormLabel>Email</FormLabel>
-              <Input type="email" placeholder="Enter your email" autoComplete="off" {...register('email', { required: 'Email is required' })} />
+              <Input
+                type="email"
+                placeholder="Enter your email"
+                autoComplete="off"
+                {...register('email', { required: 'Email is required' })}
+              />
               <FormErrorMessage>{errors.email && errors.email.message}</FormErrorMessage>
             </FormControl>
 
             <FormControl isInvalid={!!errors.password} isRequired>
               <FormLabel>Password</FormLabel>
-              <Input type="password" placeholder="Password" autoComplete="off" {...register('password', { required: 'Password is required' })}/>
+              <Input
+                type="password"
+                placeholder="Password"
+                autoComplete="off"
+                {...register('password', { required: 'Password is required' })}
+              />
               <FormErrorMessage>{errors.password && errors.password.message}</FormErrorMessage>
             </FormControl>
+
+            {loginError && <p>{loginError}</p>} {/* Display the error message */}
 
             <Button type="submit" colorScheme="blue" width="full">
               Login
             </Button>
 
-            <Button type="submit" onClick={() => {router.push('/signup')}} colorScheme="blue" width="full">
+            <Button type="button" onClick={() => { router.push('/signup') }} colorScheme="blue" width="full">
               SignUp
             </Button>
           </Stack>
