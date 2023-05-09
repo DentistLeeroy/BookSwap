@@ -1,11 +1,9 @@
-import { Box, Button, FormControl, FormErrorMessage, FormLabel, Input, Stack } from '@chakra-ui/react';
+import { Box, Button, FormControl, FormErrorMessage, FormLabel, Input, Stack, Text } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { auth } from "../app/firebase";
-import {createUserWithEmailAndPassword} from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, fetchSignInMethodsForEmail } from "firebase/auth";
 import AuthDetails from '@/app/AuthDetails';
 import router, { useRouter } from 'next/router';
-
-
 
 const SignUp = () => {
   const router = useRouter();
@@ -13,20 +11,31 @@ const SignUp = () => {
     handleSubmit,
     register,
     formState: { errors },
+    setError,
+    clearErrors,
   } = useForm();
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     const { email, password } = data;
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        console.log(userCredential)
-        router.push('/profile');
-      }).catch((error) => {
-        console.log(error)
-      })
+    const authInstance = getAuth();
+    try {
+      const signInMethods = await fetchSignInMethodsForEmail(authInstance, email);
+      if (signInMethods.length > 0) {
+        setError('email', { type: 'manual', message: 'Username already exists' });
+      } else {
+        createUserWithEmailAndPassword(authInstance, email, password)
+          .then((userCredential) => {
+            console.log(userCredential);
+            router.push('/profile');
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
-
-  
 
   return (
     <Box
@@ -42,15 +51,32 @@ const SignUp = () => {
           <Stack spacing={4}>
             <FormControl isInvalid={!!errors.email} isRequired>
               <FormLabel>Email</FormLabel>
-              <Input type="email" placeholder="Enter your email" autoComplete="off" {...register('email', { required: 'Email is required' })} />
+              <Input
+                type="email"
+                placeholder="Enter your email"
+                autoComplete="off"
+                {...register('email', { required: 'Email is required' })}
+                onFocus={() => clearErrors('email')}
+              />
               <FormErrorMessage>{errors.email && errors.email.message}</FormErrorMessage>
             </FormControl>
 
             <FormControl isInvalid={!!errors.password} isRequired>
               <FormLabel>Password</FormLabel>
-              <Input type="password" placeholder="Password" autoComplete="off" {...register('password', { required: 'Password is required' })} />
+              <Input
+                type="password"
+                placeholder="Password"
+                autoComplete="off"
+                {...register('password', { required: 'Password is required' })}
+              />
               <FormErrorMessage>{errors.password && errors.password.message}</FormErrorMessage>
             </FormControl>
+
+            {errors.email && (
+              <Text color="red" fontSize="sm">
+                {errors.email.message}
+              </Text>
+            )}
 
             <Button type="submit" colorScheme="blue" width="full">
               Sign Up
