@@ -7,17 +7,13 @@ const AuthDetails = () => {
     const [authUser, setAuthUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const listen = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setAuthUser(user);
-      } else {
-        setAuthUser(null);
-      }
-    });
-    return () => {
-      listen();
-    };
-  }, []);
+  signOut(auth)
+    .then(() => {
+      console.log("sign out successful");
+    })
+    .catch((error) => console.log(error));
+}, []);
+
 
   const userSignOut = () => {
     signOut(auth)
