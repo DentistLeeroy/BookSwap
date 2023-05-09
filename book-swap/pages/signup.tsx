@@ -1,7 +1,11 @@
 import { Box, Button, FormControl, FormErrorMessage, FormLabel, Input, Stack } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
+import { auth } from "../app/firebase";
+import {createUserWithEmailAndPassword} from "firebase/auth";
+import AuthDetails from '@/app/AuthDetails';
 
-const LoginPage = () => {
+
+const SignUp = () => {
   const {
     handleSubmit,
     register,
@@ -9,9 +13,15 @@ const LoginPage = () => {
   } = useForm();
 
   const onSubmit = (data: any) => {
-    // Perform login logic here
-    console.log(data);
+    const { email, password } = data;
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        console.log(userCredential)
+      }).catch((error) => {
+        console.log(error)
+      })
   };
+  
 
   return (
     <Box
@@ -25,23 +35,20 @@ const LoginPage = () => {
       <Box bg="white" p={8} borderRadius="md" boxShadow="lg">
         <form onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={4}>
-            <FormControl isInvalid={!!errors.username} isRequired>
-              <FormLabel>Username</FormLabel>
-              <Input type="text" {...register('username', { required: 'Username is required' })} />
-              <FormErrorMessage>{errors.username && errors.username.message}</FormErrorMessage>
+            <FormControl isInvalid={!!errors.email} isRequired>
+              <FormLabel>Email</FormLabel>
+              <Input type="email" placeholder="Enter your email" autoComplete="off" {...register('email', { required: 'Email is required' })} />
+              <FormErrorMessage>{errors.email && errors.email.message}</FormErrorMessage>
             </FormControl>
 
             <FormControl isInvalid={!!errors.password} isRequired>
               <FormLabel>Password</FormLabel>
-              <Input
-                type="password"
-                {...register('password', { required: 'Password is required' })}
-              />
+              <Input type="password" placeholder="Password" autoComplete="off" {...register('password', { required: 'Password is required' })} />
               <FormErrorMessage>{errors.password && errors.password.message}</FormErrorMessage>
             </FormControl>
 
             <Button type="submit" colorScheme="blue" width="full">
-              Login
+              Sign Up
             </Button>
           </Stack>
         </form>
@@ -50,4 +57,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default SignUp;
