@@ -3,6 +3,8 @@ import { useForm } from 'react-hook-form';
 import { auth } from "../app/firebase";
 import {signInWithEmailAndPassword} from "firebase/auth";
 import AuthDetails from '@/app/AuthDetails';
+import router, { useRouter } from 'next/router';
+import { Url } from 'next/dist/shared/lib/router/router';
 
 const LoginPage = () => {
   const {
@@ -48,6 +50,10 @@ const LoginPage = () => {
 
             <Button type="submit" colorScheme="blue" width="full">
               Login
+            </Button>
+
+            <Button type="submit" onClick={() => {router.push('/signup')}} colorScheme="blue" width="full">
+              SignUp
             </Button>
           </Stack>
         </form>
