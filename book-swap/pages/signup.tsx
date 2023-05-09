@@ -3,9 +3,12 @@ import { useForm } from 'react-hook-form';
 import { auth } from "../app/firebase";
 import {createUserWithEmailAndPassword} from "firebase/auth";
 import AuthDetails from '@/app/AuthDetails';
+import router, { useRouter } from 'next/router';
+
 
 
 const SignUp = () => {
+  const router = useRouter();
   const {
     handleSubmit,
     register,
@@ -17,10 +20,12 @@ const SignUp = () => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         console.log(userCredential)
+        router.push('/profile');
       }).catch((error) => {
         console.log(error)
       })
   };
+
   
 
   return (

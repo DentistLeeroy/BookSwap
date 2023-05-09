@@ -4,9 +4,9 @@ import { auth } from "../app/firebase";
 import {signInWithEmailAndPassword} from "firebase/auth";
 import AuthDetails from '@/app/AuthDetails';
 import router, { useRouter } from 'next/router';
-import { Url } from 'next/dist/shared/lib/router/router';
 
 const LoginPage = () => {
+  const router = useRouter();
   const {
     handleSubmit,
     register,
@@ -18,6 +18,7 @@ const LoginPage = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         console.log(userCredential)
+        router.push('/profile');
       }).catch((error) => {
         console.log(error)
       })
