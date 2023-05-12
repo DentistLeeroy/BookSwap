@@ -1,8 +1,8 @@
 import { Box, Button, FormControl, FormErrorMessage, FormLabel, Input, Stack, Text } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
-import { auth } from "../app/firebase";
+import { auth } from "../app/firebase/server/firebase";
 import { createUserWithEmailAndPassword, getAuth, fetchSignInMethodsForEmail } from "firebase/auth";
-import AuthDetails from '@/app/AuthDetails';
+import AuthDetails from '@/app/firebase/server/AuthDetails';
 import router, { useRouter } from 'next/router';
 
 const SignUp = () => {
