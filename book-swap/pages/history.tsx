@@ -1,5 +1,3 @@
-// pages/profile.tsx
-
 import React from 'react';
 import { useRouter } from 'next/router';
 
@@ -25,50 +23,28 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div>
+      {/* Render your profile page content here */}
 
       {/* Render bottom navigation */}
       <nav>
         <ul>
           {bottomNavItems.map((item) => (
-            <li
-            key={item.path}
-            className={pathname === item.path ? 'active' : ''}
-            onClick={() => handleNavItemClicked(item.path)}
-            >
+              <li
+              key={item.path}
+              className={pathname === item.path ? 'active' : ''}
+              onClick={() => handleNavItemClicked(item.path)}
+              >
               {item.label}
             </li>
           ))}
         </ul>
       </nav>
 
-
-      <div className='flex-container'>
-        <h1>Your Profile</h1>
-        <img src="/images/tyler.png" alt="avatar" />
-        <h2>Tyler</h2>
-        <h3>Average Marxism Enjoyer</h3>
-        <span className='horizontal-container'>
-          <h4>Fiction</h4>
-          <h4>Politics</h4>
-          <h4>Poetry</h4>
-        </span>
-      </div>
+    <h1>History</h1>
       {/* Add styles for the active bottom navigation item */}
       <style jsx>{`
         .active {
           font-weight: bold;
-        }
-
-        .flex-container{
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
-
-        .horizontal-container{
-          display: flex;
-          flex-direction: row;
-          gap: 20px;
         }
       `}</style>
     </div>
