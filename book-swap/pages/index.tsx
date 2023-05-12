@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Button, FormControl, FormErrorMessage, FormLabel, Input, Stack } from '@chakra-ui/react';
+import { ChakraProvider } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { Auth, getAuth, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
 import AuthDetails from '../app/firebase/server/AuthDetails';
@@ -45,6 +46,7 @@ const LoginPage = () => {
   };
 
   return (
+    <ChakraProvider>
     <Box width="100vw" height="100vh" display="flex" justifyContent="center" alignItems="center" bg="gray.100">
       <Box bg="white" p={8} borderRadius="md" boxShadow="lg">
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -100,6 +102,7 @@ const LoginPage = () => {
       </Box>
       <AuthDetails />
     </Box>
+    </ChakraProvider>
   );
 };
 
