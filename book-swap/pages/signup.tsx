@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { auth } from "../app/firebase/server/firebase";
 import { createUserWithEmailAndPassword, getAuth, fetchSignInMethodsForEmail } from "firebase/auth";
 import AuthDetails from '../app/firebase/server/AuthDetails';
+import { firestore } from "../app/firebase/server/firebase";
 import router, { useRouter } from 'next/router';
 
 const SignUp = () => {
