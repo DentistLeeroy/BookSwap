@@ -1,6 +1,5 @@
 import { Box, Button, Checkbox, VStack, FormControl, FormErrorMessage, Menu, MenuButton, MenuList, MenuItem, FormLabel, Input, Stack, Text, Textarea, Select, CheckboxGroup, MenuItemOption, MenuOptionGroup, Divider, MenuDivider } from '@chakra-ui/react';
 import { ChakraProvider } from '@chakra-ui/react';
-import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useForm } from 'react-hook-form';
 import { auth } from "../app/firebase/server/firebase";
 import { createUserWithEmailAndPassword, getAuth, fetchSignInMethodsForEmail } from "firebase/auth";
