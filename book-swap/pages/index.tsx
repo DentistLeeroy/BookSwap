@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Button, FormControl, FormErrorMessage, FormLabel, Input, Stack } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { Auth, getAuth, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
-import AuthDetails from '@/app/AuthDetails';
+import AuthDetails from '../app/firebase/server/AuthDetails';
 import { useRouter } from 'next/router';
 
 const auth = getAuth();
