@@ -52,6 +52,10 @@ const ProfilePage: React.FC = () => {
           <h4>Politics</h4>
           <h4>Poetry</h4>
         </span>
+        <span className='horizontal-container'>
+          <img src="/images/book.png" alt="book" />
+          <h3><u>Add new</u></h3>
+        </span>
       </div>
       {/* Add styles for the active bottom navigation item */}
       <style jsx>{`
@@ -69,6 +73,7 @@ const ProfilePage: React.FC = () => {
           display: flex;
           flex-direction: row;
           gap: 20px;
+          align-items: center;
         }
       `}</style>
     </div>
