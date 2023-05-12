@@ -19,6 +19,7 @@
     "autoprefixer": "10.4.14",
     "firebase": "^9.21.0",
     "firebase-admin": "^11.8.0",
+    "firebase-firestore-lite": "^1.0.3",
     "framer-motion": "^4.1.17",
     "next": "13.4.0",
     "postcss": "8.4.23",
