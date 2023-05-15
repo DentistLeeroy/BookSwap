@@ -1,6 +1,19 @@
-import { Box, Button, ChakraProvider, Flex, Icon, Image, Text, VStack } from "@chakra-ui/react";
-import { ChevronRightIcon, CloseIcon, StarIcon } from "@chakra-ui/icons";
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { useRouter } from 'next/router';
+import { Avatar, Box, Button, ChakraProvider, Flex, Icon, Image, Text, VStack } from '@chakra-ui/react';
+import { ChevronRightIcon, CloseIcon, StarIcon } from '@chakra-ui/icons';
+
+type BottomNavItem = {
+  label: string;
+  path: string;
+};
+
+const bottomNavItems: BottomNavItem[] = [
+  { label: 'Home', path: '/home' },
+  { label: 'Messages', path: '/messages' },
+  { label: 'History', path: '/history' },
+  { label: 'Profile', path: '/profile' },
+];
 
 type Book = {
   id: number;
@@ -11,18 +24,18 @@ type Book = {
 const books: Book[] = [
   {
     id: 1,
-    title: "Fight Club",
-    image: "/images/book.png",
+    title: 'Fight Club',
+    image: '/images/book.png',
   },
   {
     id: 2,
-    title: "War and Peace",
-    image: "/images/book-2.png",
+    title: 'War and Peace',
+    image: '/images/book-2.png',
   },
   {
     id: 3,
-    title: "My book cover",
-    image: "/images/book-3.png",
+    title: 'My book cover',
+    image: '/images/book-3.png',
   },
   // Add more books here
 ];
@@ -30,6 +43,12 @@ const books: Book[] = [
 const ProfilePage: React.FC = () => {
   const [currentBookIndex, setCurrentBookIndex] = useState(0);
   const [noNewBooks, setNoNewBooks] = useState(false);
+  const router = useRouter();
+  const { pathname } = router;
+
+  const handleNavItemClicked = (path: string) => {
+    router.push(path);
+  };
 
   const handleLike = () => {
     if (currentBookIndex < books.length - 1) {
@@ -38,14 +57,14 @@ const ProfilePage: React.FC = () => {
       setNoNewBooks(true);
     }
   };
-  
+
   const handleDislike = () => {
     if (currentBookIndex < books.length - 1) {
       setCurrentBookIndex((prevIndex) => prevIndex + 1);
     } else {
       setNoNewBooks(true);
     }
-  };  
+  };
 
   if (noNewBooks) {
     return (
