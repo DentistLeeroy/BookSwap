@@ -1,81 +1,57 @@
-import {
-    Box,
-    Button,
-    Checkbox,
-    VStack,
-    FormControl,
-    FormErrorMessage,
-    Menu,
-    MenuButton,
-    MenuList,
-    MenuItem,
-    FormLabel,
-    Input,
-    Stack,
-    Text,
-    Textarea,
-    Select,
-    CheckboxGroup,
-    MenuItemOption,
-    MenuOptionGroup,
-    Divider,
-    MenuDivider
-} from '@chakra-ui/react';
+import { Box, Button, Checkbox, VStack, FormControl, FormErrorMessage, Menu, MenuButton, MenuList, MenuItem, FormLabel, Input, Stack, Text, Textarea, Select, CheckboxGroup, MenuItemOption, MenuOptionGroup, Divider, MenuDivider } from '@chakra-ui/react';
 import {ChakraProvider} from '@chakra-ui/react';
 import {useForm} from 'react-hook-form';
 import {createUserWithEmailAndPassword, getAuth, fetchSignInMethodsForEmail} from "firebase/auth";
-import AuthDetails from '../app/firebase/server/AuthDetails';
-import {firestore, doc, setDoc, collection} from "../app/firebase/server/firebase";
+import { firestore, collection, getDocs, doc, setDoc } from "../app/firebase/server/firebase";
 import router, {useRouter} from 'next/router';
-import { useState } from 'react';
-
+import {useEffect, useState} from 'react';
 
 const SignUp = () => {
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-
-
-    const router = useRouter();
-    const {
-        handleSubmit,
-        register,
-        formState: {
-            errors
-        },
-        setError,
-        clearErrors
-    } = useForm();
-
-    const onSubmit = async (data : any) => {
-        const {email, password, profileName, profileDescription} = data;
-        const authInstance = getAuth();
-        try {
-            const signInMethods = await fetchSignInMethodsForEmail(authInstance, email);
-            if (signInMethods.length > 0) {
-                setError('email', {
-                    type: 'manual',
-                    message: 'Username already exists'
-                });
-            } else {
-                createUserWithEmailAndPassword(authInstance, email, password).then(async (userCredential) => {
-                    const user = userCredential.user;
-                    const userProfile = {
-                        name: profileName || '', // Ensure a valid value or use an empty string as fallback
-                        description: profileDescription || '', // Ensure a valid value or use an empty string as fallback
-                        interests: selectedGenres || [] // You can add interests here if available in the form
-                    };
-                    const userDocRef = doc(firestore, 'userProfiles', user.uid);
-                    await setDoc(userDocRef, userProfile);
-                    console.log("User profile created successfully");
-                    router.push('/profile');
-                }).catch((error) => {
-                    console.log(error);
-                });
-            }
-        } catch (error) {
-            console.log(error);
-        }
+    const [genres, setGenres] = useState([]); // State variable to store genres
+    const [selectedGenres, setSelectedGenres] = useState([]); // State variable to store selected genres
+  
+    const router = useRouter(); // Access the router object from Next.js
+  
+    const { handleSubmit, register, formState: { errors }, setError, clearErrors } = useForm(); // Form handling using react-hook-form
+  
+    useEffect(() => {
+      // Fetch book genres when the component mounts
+      fetchBookGenres();
+    }, []);
+  
+    const fetchBookGenres = async () => {
+      const bookGenresRef = collection(firestore, "bookGenres"); // Reference to the "bookGenres" collection in Firestore
+      const snapshot = await getDocs(bookGenresRef); // Fetch the documents from the collection
+      const bookGenres = snapshot.docs.map((doc) => doc.data().book); // Extract the "book" field from each document
+      setGenres(bookGenres); // Update the genres state with the fetched book genres
     };
-
+  
+    const onSubmit = async (data) => {
+      const { email, password, profileName, profileDescription } = data; // Destructure form data
+      const authInstance = getAuth(); // Get the authentication instance from Firebase
+      try {
+        const signInMethods = await fetchSignInMethodsForEmail(authInstance, email); // Check if the email already exists
+        if (signInMethods.length > 0) {
+          // Set an error if the email already exists
+          setError('email', { type: 'manual', message: 'Username already exists' });
+        } else {
+          const userCredential = await createUserWithEmailAndPassword(authInstance, email, password); // Create a new user account
+          const user = userCredential.user; // Get the user object
+          const userProfile = {
+            name: profileName || '', // Ensure a valid value or use an empty string as fallback
+            description: profileDescription || '', // Ensure a valid value or use an empty string as fallback
+            interests: selectedGenres || [] // Store the selected genres as user interests
+          };
+          const userDocRef = doc(firestore, 'userProfiles', user.uid); // Reference to the user's profile document
+          await setDoc(userDocRef, userProfile); // Set the user's profile document in Firestore
+          console.log("User profile created successfully");
+          router.push('/profile'); // Navigate to the user's profile page after successful profile creation
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+  
     return (
         <ChakraProvider>
             <Box width="100vw" height="100vh" display="flex" justifyContent="center" alignItems="center" bg="gray.100">
@@ -138,47 +114,24 @@ const SignUp = () => {
                                     colorScheme='blue'>
                                     Select Genres
                                 </MenuButton>
-                                <MenuList minWidth='240px'>
-                                    <MenuOptionGroup title='Select Genres' type='checkbox'>
-                                        <MenuItemOption value='politics'
-                                            onClick={
-                                                () => setSelectedGenres(prevGenres => [
-                                                    ...prevGenres,
-                                                    'politics'
-                                                ])
-                                        }>
-                                            Politics
-                                        </MenuItemOption>
-                                        <MenuItemOption value='poetry'
-                                            onClick={
-                                                () => setSelectedGenres((prevGenres: any) => [
-                                                    ...prevGenres,
-                                                    'poetry'
-                                                ])
-                                        }>
-                                            Poetry
-                                        </MenuItemOption>
-                                        <MenuItemOption value='romance'
-                                            onClick={
-                                                () => setSelectedGenres((prevGenres: any) => [
-                                                    ...prevGenres,
-                                                    'romance'
-                                                ])
-                                        }>
-                                            Romance
-                                        </MenuItemOption>
-                                        <MenuItemOption value='historical'
-                                            onClick={
-                                                () => setSelectedGenres((prevGenres: any) => [
-                                                    ...prevGenres,
-                                                    'historical'
-                                                ])
-                                        }>
-                                            Historical
-                                        </MenuItemOption>
-
-                                    </MenuOptionGroup>
+                                <MenuList minWidth='240px' style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                                    <MenuOptionGroup title="Select Genres" type="checkbox" >
+                                        {
+                                        genres.map((genre) => (
+                                            <MenuItemOption 
+                                                key={genre}
+                                                value={genre}
+                                                onClick={
+                                                    () => setSelectedGenres((prevGenres) => [
+                                                        ...prevGenres,
+                                                        genre
+                                                    ])
+                                            }>
+                                                {genre} </MenuItemOption>
+                                        ))
+                                    } </MenuOptionGroup>
                                 </MenuList>
+
                             </Menu>
 
                             {
@@ -200,5 +153,6 @@ const SignUp = () => {
         </ChakraProvider>
     );
 };
+
 
 export default SignUp;
