@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import { Avatar, Box, ChakraProvider, Flex, Link, VStack, Text } from '@chakra-ui/react';
+import { Avatar, Box, ChakraProvider, extendTheme, Flex, Link, Text, VStack } from '@chakra-ui/react';
 
 type BottomNavItem = {
   label: string;
@@ -14,7 +14,7 @@ const bottomNavItems: BottomNavItem[] = [
   { label: 'Profile', path: '/profile' },
 ];
 
-const MessagesPage: React.FC = () => {
+const ProfilePage: React.FC = () => {
   const router = useRouter();
   const { pathname } = router;
 
@@ -24,26 +24,26 @@ const MessagesPage: React.FC = () => {
 
   return (
     <ChakraProvider>
-      <Flex height="100vh" width="100vw">
-      <VStack align="flex-start" spacing={4} pr={8} borderRight="1px solid" borderColor="gray.200">
-          {/* Render bottom navigation */}
-          {bottomNavItems.map((item) => (
-            <Link
-              key={item.path}
-              onClick={() => handleNavItemClicked(item.path)}
-              color={pathname === item.path ? 'blue.500' : 'gray.500'}
-              fontWeight={pathname === item.path ? 'bold' : 'normal'}
-              p={2}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </VStack>
+      <Box p={4}>
+        <Flex direction="row">
+          <VStack align="flex-start" spacing={4} pr={4} borderRight="1px solid" borderColor="gray.200">
+            {/* Render bottom navigation */}
+            {bottomNavItems.map((item) => (
+              <Link
+                key={item.path}
+                onClick={() => handleNavItemClicked(item.path)}
+                color={pathname === item.path ? 'blue.500' : 'gray.500'}
+                fontWeight={pathname === item.path ? 'bold' : 'normal'}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </VStack>
 
-        {/* Render your messages page content here */}
-        <Flex flex={1} justifyContent="center" alignItems="center" bg="gray.100">
-          <Box p={4}>
-          <VStack spacing={4} mt={4} maxWidth={400}>
+          {/* Render your profile page content here */}
+          <Flex direction="column" align="center" justify="center" flex={1}>
+            {/* Chat-like messages */}
+            <VStack spacing={4} mt={4} maxWidth={400}>
               <Flex alignItems="center">
                 <Avatar name="John Doe" size="sm" />
                 <Text ml={2}>Hey there! Did you know...</Text>
@@ -74,11 +74,12 @@ const MessagesPage: React.FC = () => {
                 </Text>
               </Flex>
             </VStack>
-          </Box>
+
+          </Flex>
         </Flex>
-      </Flex>
+      </Box>
     </ChakraProvider>
   );
 };
 
-export default MessagesPage;
+export default ProfilePage;
