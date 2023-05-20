@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, FormControl, FormErrorMessage, FormLabel, Input, Stack } from '@chakra-ui/react';
+import { Box, Button, Flex, FormControl, FormErrorMessage, FormLabel, Input, Stack } from '@chakra-ui/react';
 import { ChakraProvider } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { Auth, getAuth, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
@@ -47,63 +47,62 @@ const LoginPage = () => {
 
   return (
     <ChakraProvider>
-    <Box width="100vw" height="100vh" display="flex" justifyContent="center" alignItems="center" bg="gray.100">
-      <Box bg="white" p={8} borderRadius="md" boxShadow="lg">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack spacing={4}>
-            <FormControl isInvalid={!!errors.email} isRequired>
-              <FormLabel>Email</FormLabel>
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                autoComplete="off"
-                {...register('email', { required: 'Email is required' })}
-              />
-              <FormErrorMessage>{errors.email && errors.email.message}</FormErrorMessage>
-            </FormControl>
-
-            <FormControl isInvalid={!!errors.password} isRequired>
-              <FormLabel>Password</FormLabel>
-              <Input
-                type="password"
-                placeholder="Password"
-                autoComplete="off"
-                {...register('password', { required: 'Password is required' })}
-              />
-              <FormErrorMessage>{errors.password && errors.password.message}</FormErrorMessage>
-            </FormControl>
-
-            {loginError && <p>{loginError}</p>}
-
-            <Button type="submit" colorScheme="blue" width="full">
-              Login
-            </Button>
-
-            <Button type="button" onClick={() => router.push('/signup')} colorScheme="blue" width="full">
-              SignUp
-            </Button>
-
-            <div className="resetPassword-main">
-              <label>Email</label> <br />
-              <input
-                className="resetEmailInput"
-                placeholder="Email"
-                type="email"
-                value={resetEmail}
-                onChange={(e) => setResetEmail(e.target.value)}
-              />{' '}
-              <br />
-              <button className="resetBtn" type="button" onClick={handleResetPassword}>
-                Reset password
-              </button>
-            </div>
-          </Stack>
-        </form>
-      </Box>
-      <AuthDetails />
-    </Box>
+      <Flex width="100vw" height="100vh" justifyContent="center" alignItems="center" bg="gray.100">
+        <Box bg="white" p={8} borderRadius="md" boxShadow="lg">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Stack spacing={4}>
+              <FormControl isInvalid={!!errors.email} isRequired>
+                <FormLabel>Email</FormLabel>
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  autoComplete="off"
+                  {...register('email', { required: 'Email is required' })}
+                />
+                <FormErrorMessage>{errors.email && errors.email.message}</FormErrorMessage>
+              </FormControl>
+  
+              <FormControl isInvalid={!!errors.password} isRequired>
+                <FormLabel>Password</FormLabel>
+                <Input
+                  type="password"
+                  placeholder="Password"
+                  autoComplete="off"
+                  {...register('password', { required: 'Password is required' })}
+                />
+                <FormErrorMessage>{errors.password && errors.password.message}</FormErrorMessage>
+              </FormControl>
+  
+              {loginError && <p style={{ color: 'red' }}>{loginError}</p>}
+  
+              <Button type="submit" colorScheme="blue" width="full">
+                Login
+              </Button>
+  
+              <Button type="button" onClick={() => router.push('/signup')} colorScheme="blue" width="full">
+                SignUp
+              </Button>
+  
+              <Stack spacing={4}>
+                <p>Email</p>
+                <Input
+                  className="resetEmailInput"
+                  placeholder="Email"
+                  type="email"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                />
+                <Button className="resetBtn" type="button" onClick={handleResetPassword} colorScheme="blue">
+                  Reset password
+                </Button>
+              </Stack>
+            </Stack>
+          </form>
+        </Box>
+        <AuthDetails />
+      </Flex>
     </ChakraProvider>
-  );
+  );   
 };
 
 export default LoginPage;
