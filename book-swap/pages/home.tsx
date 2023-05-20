@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { Avatar, Box, Button, ChakraProvider, Flex, Icon, Image, Text, VStack, Link } from '@chakra-ui/react';
 import { ChevronRightIcon, CloseIcon, StarIcon } from '@chakra-ui/icons';
+import useRequireAuth from '../utils/useRequireAuth';
 
 type BottomNavItem = {
   label: string;
@@ -46,6 +47,8 @@ const HomePage: React.FC = () => {
   const router = useRouter();
   const { pathname } = router;
 
+  const currentUser = useRequireAuth();
+
   const handleNavItemClicked = (path: string) => {
     router.push(path);
   };
@@ -67,6 +70,11 @@ const HomePage: React.FC = () => {
   };
 
   const currentBook = books[currentBookIndex];
+
+  if (!currentUser) {
+    // Redirect to login page or render a loading state if authentication is in progress
+    return <div>Loading...</div>;
+  }
 
   return (
     <ChakraProvider>

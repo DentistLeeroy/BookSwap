@@ -1,6 +1,8 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import { Avatar, Box, ChakraProvider, Flex, Link, VStack, Text } from '@chakra-ui/react';
+import useRequireAuth from '../utils/useRequireAuth';
+
 
 type BottomNavItem = {
   label: string;
@@ -18,14 +20,21 @@ const MessagesPage: React.FC = () => {
   const router = useRouter();
   const { pathname } = router;
 
+  const currentUser = useRequireAuth();
+
   const handleNavItemClicked = (path: string) => {
     router.push(path);
   };
 
+  if (!currentUser) {
+    // Redirect to login page or render a loading state if authentication is in progress
+    return <div>Loading...</div>;
+  }
+
   return (
     <ChakraProvider>
       <Flex height="100vh" width="100vw">
-      <VStack align="flex-start" spacing={4} pr={8} borderRight="1px solid" borderColor="gray.200">
+        <VStack align="flex-start" spacing={4} pr={8} borderRight="1px solid" borderColor="gray.200">
           {/* Render bottom navigation */}
           {bottomNavItems.map((item) => (
             <Link
@@ -43,7 +52,7 @@ const MessagesPage: React.FC = () => {
         {/* Render your messages page content here */}
         <Flex flex={1} justifyContent="center" alignItems="center" bg="gray.100">
           <Box p={4}>
-          <VStack spacing={4} mt={4} maxWidth={400}>
+            <VStack spacing={4} mt={4} maxWidth={400}>
               <Flex alignItems="center">
                 <Avatar name="John Doe" size="sm" />
                 <Text ml={2}>Hey there! Did you know...</Text>

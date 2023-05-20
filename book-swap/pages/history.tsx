@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import { Avatar, Box, ChakraProvider, Flex, Link, VStack, Text } from '@chakra-ui/react';
+import useRequireAuth from '../utils/useRequireAuth';
 
 type BottomNavItem = {
   label: string;
@@ -18,9 +19,16 @@ const HistoryPage: React.FC = () => {
   const router = useRouter();
   const { pathname } = router;
 
+  const currentUser = useRequireAuth();
+
   const handleNavItemClicked = (path: string) => {
     router.push(path);
   };
+
+  if (!currentUser) {
+    // Redirect to login page or render a loading state if authentication is in progress
+    return <div>Loading...</div>;
+  }
 
   return (
     <ChakraProvider>

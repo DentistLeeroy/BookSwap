@@ -5,6 +5,8 @@ import { Box, ChakraProvider, Stack, Button, Heading, Menu, MenuButton, MenuList
 import { getDoc, getFirestore } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes } from 'firebase/storage';
 import { firestore, collection, getDocs, doc, setDoc } from "../app/firebase/server/firebase";
+import useRequireAuth from '../utils/useRequireAuth';
+
 
 type UserProfile = {
   name: string;
@@ -21,6 +23,7 @@ type UserBook = {
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
+  const currentUser = useRequireAuth();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [bookTitle, setBookTitle] = useState('');
@@ -147,6 +150,11 @@ const handlePictureUpload = async (e) => {
       console.error('Error fetching user books:', error);
     }
   };
+
+  if (!currentUser) {
+    // Redirect to login page or render a loading state if authentication is in progress
+    return <div>Loading...</div>;
+  }
 
   return (
     <ChakraProvider>
