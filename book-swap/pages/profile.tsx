@@ -4,7 +4,7 @@ import { getAuth } from 'firebase/auth';
 import { Box, ChakraProvider, Stack, Button, Heading, Menu, MenuButton, MenuList, MenuItemOption, MenuOptionGroup, FormControl, FormLabel, Input, VStack, Link, Flex } from '@chakra-ui/react';
 import { getDoc, getFirestore } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes } from 'firebase/storage';
-import { firestore, collection, getDocs, doc, setDoc } from "../app/firebase/server/firebase";
+import { collection, doc, setDoc, getDocs } from 'firebase/firestore';
 import useRequireAuth from '../utils/useRequireAuth';
 
 type BottomNavItem = {
@@ -45,17 +45,17 @@ const ProfilePage: React.FC = () => {
   const auth = getAuth();
   const userId = auth.currentUser?.uid;
   const [userBooks, setUserBooks] = useState<UserBook[]>([]);
-  
+
   const handleNavItemClicked = (path: string) => {
     router.push(path);
   };
-
 
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
         if (userId) {
-          const userDocRef = doc(getFirestore(), 'userProfiles', userId);
+          const firestore = getFirestore();
+          const userDocRef = doc(firestore, 'userProfiles', userId);
           const userDocSnap = await getDoc(userDocRef);
 
           if (userDocSnap.exists()) {
@@ -69,25 +69,49 @@ const ProfilePage: React.FC = () => {
       }
     };
 
-    const storedUserProfile = localStorage.getItem('userProfile');
-    if (storedUserProfile) {
-      setUserProfile(JSON.parse(storedUserProfile));
-    } else {
-      fetchUserProfile();
-    }
-    fetchUserBooks(); // Fetch user's uploaded books
+    const fetchUserBooks = async () => {
+      try {
+        if (userId) {
+          const firestore = getFirestore();
+          const userBooksRef = collection(firestore, 'userBooks');
+          const snapshot = await getDocs(userBooksRef);
+          const userBooksData = snapshot.docs.map((doc) => {
+            const bookData = doc.data() as UserBook;
+            return { ...bookData, id: doc.id };
+          });
+          setUserBooks(userBooksData);
+        }
+      } catch (error) {
+        console.error('Error fetching user books:', error);
+      }
+    };
+
+    fetchUserProfile();
+    fetchUserBooks();
   }, [userId]);
 
   useEffect(() => {
-    fetchBookGenres();
+    const storedUserProfile = localStorage.getItem('userProfile');
+    if (storedUserProfile) {
+      setUserProfile(JSON.parse(storedUserProfile));
+    }
   }, []);
 
-  const fetchBookGenres = async () => {
-    const bookGenresRef = collection(firestore, "bookGenres");
-    const snapshot = await getDocs(bookGenresRef);
-    const bookGenres = snapshot.docs.map((doc) => doc.data().book);
-    setGenres(bookGenres);
-  };
+  useEffect(() => {
+    const fetchBookGenres = async () => {
+      try {
+        const firestore = getFirestore();
+        const bookGenresRef = collection(firestore, 'bookGenres');
+        const snapshot = await getDocs(bookGenresRef);
+        const bookGenres = snapshot.docs.map((doc) => doc.data().book);
+        setGenres(bookGenres);
+      } catch (error) {
+        console.error('Error fetching book genres:', error);
+      }
+    };
+
+    fetchBookGenres();
+  }, []);
 
   const handleModalOpen = () => {
     setIsModalOpen(true);
@@ -97,35 +121,33 @@ const ProfilePage: React.FC = () => {
     setIsModalOpen(false);
   };
 
-const handlePictureUpload = async (e) => {
-  try {
-    const file = e.target.files[0];
-    const storage = getStorage();
-    const userId = auth.currentUser?.uid;
-    const picturePath = `bookPictures/${userId}/${bookTitle}_${Date.now()}`; // Generate a unique identifier for the new picture
+  const handlePictureUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      const file = e.target.files[0];
+      const storage = getStorage();
+      const userId = auth.currentUser?.uid;
+      const picturePath = `bookPictures/${userId}/${bookTitle}_${Date.now()}`;
 
-    // Upload the new picture with the unique identifier
-    const pictureRef = ref(storage, picturePath);
-    await uploadBytes(pictureRef, file);
+      const pictureRef = ref(storage, picturePath);
+      await uploadBytes(pictureRef, file);
 
-    const userBook = {
-      title: bookTitle,
-      author: bookAuthor,
-      genres: selectedGenres,
-      picture: picturePath, // Update the picture path with the new unique identifier
-    };
-    setUserBooks((prevUserBooks) => [...prevUserBooks, userBook]);
+      const userBook: UserBook = {
+        title: bookTitle,
+        author: bookAuthor,
+        genres: selectedGenres,
+        picture: picturePath,
+      };
 
-    // Update the userBooks collection in Firestore
-    const userBooksRef = collection(firestore, 'userBooks');
-    const userBookDocRef = doc(userBooksRef, userId);
-    await setDoc(userBookDocRef, { books: [...userBooks, userBook] }, { merge: true });
-  } catch (error) {
-    console.error('Error uploading picture:', error);
-  }
-};
+      setUserBooks((prevUserBooks) => [...prevUserBooks, userBook]);
 
-  
+      const firestore = getFirestore();
+      const userBooksRef = collection(firestore, 'userBooks');
+      const userBookDocRef = doc(userBooksRef, userId);
+      await setDoc(userBookDocRef, { books: [...userBooks, userBook] }, { merge: true });
+    } catch (error) {
+      console.error('Error uploading picture:', error);
+    }
+  };
 
   const handleUpload = async () => {
     try {
@@ -134,39 +156,24 @@ const handlePictureUpload = async (e) => {
       if (!userId) {
         throw new Error('User ID not found');
       }
-  
+
+      const firestore = getFirestore();
       const userBooksRef = collection(firestore, 'userBooks');
       const pictureRef = ref(getStorage(), `bookPictures/${userId}/${bookTitle}`);
       await setDoc(doc(userBooksRef, userId), {
         title: bookTitle,
         author: bookAuthor,
         genres: selectedGenres,
-        picture: `bookPictures/${userId}/${bookTitle}` // Update the picture path to include the userID
+        picture: `bookPictures/${userId}/${bookTitle}`,
       });
-      setIsModalOpen(false); // Close the modal
+
+      setIsModalOpen(false);
     } catch (error) {
       console.error('Error uploading book:', error);
     }
   };
-  
-  
-  
-  const fetchUserBooks = async () => {
-    try {
-      const userBooksRef = collection(firestore, 'userBooks');
-      const snapshot = await getDocs(userBooksRef);
-      const userBooksData = snapshot.docs.map((doc) => {
-        const bookData = doc.data() as UserBook;
-        return { ...bookData, id: doc.id }; // Include the document ID
-      });
-      setUserBooks(userBooksData);
-    } catch (error) {
-      console.error('Error fetching user books:', error);
-    }
-  };
 
   if (!currentUser) {
-    // Redirect to login page or render a loading state if authentication is in progress
     return <div>Loading...</div>;
   }
 

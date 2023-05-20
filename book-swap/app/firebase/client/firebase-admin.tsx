@@ -2,11 +2,11 @@ import * as admin from 'firebase-admin';
 import * as path from 'path';
 
 const serviceKeyPath = path.resolve(__dirname, 'keys/serviceKey.json');
-const serviceKey = require(serviceKeyPath);
+const serviceAccount = require(serviceKeyPath);
 
-if (!admin.apps.length) { // Check if the Firebase Admin app is already initialized
+if (!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.cert(serviceKey),
+    credential: admin.credential.cert(serviceAccount),
     // Your Firebase configuration
   });
 }
