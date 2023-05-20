@@ -1,12 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { getAuth } from 'firebase/auth';
-import { Box, ChakraProvider, Stack, Button, Heading, Menu, MenuButton, MenuList, MenuItemOption, MenuOptionGroup, FormControl, FormLabel, Input } from '@chakra-ui/react';
+import { Box, ChakraProvider, Stack, Button, Heading, Menu, MenuButton, MenuList, MenuItemOption, MenuOptionGroup, FormControl, FormLabel, Input, VStack, Link, Flex } from '@chakra-ui/react';
 import { getDoc, getFirestore } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes } from 'firebase/storage';
 import { firestore, collection, getDocs, doc, setDoc } from "../app/firebase/server/firebase";
 import useRequireAuth from '../utils/useRequireAuth';
 
+type BottomNavItem = {
+  label: string;
+  path: string;
+};
+
+const bottomNavItems: BottomNavItem[] = [
+  { label: 'Home', path: '/home' },
+  { label: 'Messages', path: '/messages' },
+  { label: 'History', path: '/history' },
+  { label: 'Profile', path: '/profile' },
+];
 
 type UserProfile = {
   name: string;
@@ -23,6 +34,7 @@ type UserBook = {
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
+  const { pathname } = router;
   const currentUser = useRequireAuth();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -34,7 +46,9 @@ const ProfilePage: React.FC = () => {
   const userId = auth.currentUser?.uid;
   const [userBooks, setUserBooks] = useState<UserBook[]>([]);
   
-
+  const handleNavItemClicked = (path: string) => {
+    router.push(path);
+  };
 
 
   useEffect(() => {
@@ -158,8 +172,23 @@ const handlePictureUpload = async (e) => {
 
   return (
     <ChakraProvider>
+      <Flex height="100vh" width="100vw">
+      <VStack align="flex-start" spacing={4} pr={8} borderRight="1px solid" borderColor="gray.200">
+        {/* Render navigation */}
+        {bottomNavItems.map((item) => (
+          <Link
+            key={item.path}
+            onClick={() => handleNavItemClicked(item.path)}
+            color={pathname === item.path ? 'blue.500' : 'gray.500'}
+            fontWeight={pathname === item.path ? 'bold' : 'normal'}
+            p={2}
+          >
+            {item.label}
+          </Link>
+        ))}
+      </VStack>
+  
       <Box width="100vw" minHeight="100vh" display="flex" justifyContent="center" alignItems="center" bg="gray.100">
-        <Box bg="white" p={40} borderRadius="md" boxShadow="lg" overflowY="auto">
           <Box maxH="100%">
             <Heading as="h1" mb={4}>Your Profile</Heading>
   
@@ -188,26 +217,24 @@ const handlePictureUpload = async (e) => {
                 </Stack>
               </Box>
             </Box>
-
+  
             <Box mb={4}>
-  <Heading as="h2" size="md" mb={2}>Books on the shelf</Heading>
- {userBooks.map((book) => (
-  <Box key={book.title} mb={4}>
-    <img src={`https://firebasestorage.googleapis.com/v0/b/exam-project-89444.appspot.com/o/${encodeURIComponent(book.picture)}?alt=media`} alt={book.title} style={{ maxWidth: '200px' }} />
-    <Heading as="h3" size="sm" mt={2}>{book.title}</Heading>
-    <Heading as="h4" size="xs" mt={1}>{book.author}</Heading>
-  </Box>
-))}
-
-</Box>
-
+              <Heading as="h2" size="md" mb={2}>Books on the shelf</Heading>
+              {userBooks.map((book) => (
+                <Box key={book.title} mb={4}>
+                  <img src={`https://firebasestorage.googleapis.com/v0/b/exam-project-89444.appspot.com/o/${encodeURIComponent(book.picture)}?alt=media`} alt={book.title} style={{ maxWidth: '200px' }} />
+                  <Heading as="h3" size="sm" mt={2}>{book.title}</Heading>
+                  <Heading as="h4" size="xs" mt={1}>{book.author}</Heading>
+                </Box>
+              ))}
+            </Box>
+  
             <Box mb={4}>
               <Heading as="h2" size="md" mb={2}>Upload Book</Heading>
               <Button colorScheme="blue" onClick={handleModalOpen}>Upload</Button>
             </Box>
           </Box>
         </Box>
-      </Box>
   
       {isModalOpen && (
         <Box
@@ -259,19 +286,21 @@ const handlePictureUpload = async (e) => {
                   </MenuOptionGroup>
                 </MenuList>
               </Menu>
-              </FormControl>
-          <Box mb={4}>
-            <FormControl mt={4}>
-              <FormLabel>Picture</FormLabel>
-              <Input type="file" onChange={handlePictureUpload} />
             </FormControl>
+            <Box mb={4}>
+              <FormControl mt={4}>
+                <FormLabel>Picture</FormLabel>
+                <Input type="file" onChange={handlePictureUpload} />
+              </FormControl>
+            </Box>
+            <Button colorScheme="blue" mt={4} onClick={handleUpload}>Upload</Button>
+            <Button colorScheme="gray" mt={4} ml={2} onClick={handleModalClose}>Cancel</Button>
           </Box>
-          <Button colorScheme="blue" mt={4} onClick={handleUpload}>Upload</Button>
-          <Button colorScheme="gray" mt={4} ml={2} onClick={handleModalClose}>Cancel</Button>
         </Box>
-      </Box>
-    )}
-  </ChakraProvider>
-);
+      )}
+      </Flex>
+    </ChakraProvider>
+  );
+  
 };
 export default ProfilePage;
