@@ -49,6 +49,7 @@ const LoginPage = () => {
     <ChakraProvider>
       <Flex width="100vw" height="100vh" justifyContent="center" alignItems="center" bg="gray.100">
         <Box bg="white" p={8} borderRadius="md" boxShadow="lg">
+          <AuthDetails /><br></br>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={4}>
               <FormControl isInvalid={!!errors.email} isRequired>
@@ -61,7 +62,7 @@ const LoginPage = () => {
                 />
                 <FormErrorMessage>{errors.email && errors.email.message}</FormErrorMessage>
               </FormControl>
-  
+
               <FormControl isInvalid={!!errors.password} isRequired>
                 <FormLabel>Password</FormLabel>
                 <Input
@@ -72,17 +73,17 @@ const LoginPage = () => {
                 />
                 <FormErrorMessage>{errors.password && errors.password.message}</FormErrorMessage>
               </FormControl>
-  
+
               {loginError && <p style={{ color: 'red' }}>{loginError}</p>}
-  
+
               <Button type="submit" colorScheme="blue" width="full">
                 Login
               </Button>
-  
+
               <Button type="button" onClick={() => router.push('/signup')} colorScheme="blue" width="full">
                 SignUp
               </Button>
-  
+
               <Stack spacing={4}>
                 <p>Email</p>
                 <Input
@@ -98,11 +99,11 @@ const LoginPage = () => {
               </Stack>
             </Stack>
           </form>
+
         </Box>
-        <AuthDetails />
       </Flex>
     </ChakraProvider>
-  );   
+  );
 };
 
 export default LoginPage;
