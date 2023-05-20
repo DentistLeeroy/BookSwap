@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import { Avatar, Box, ChakraProvider, Flex, Link, VStack, Text } from '@chakra-ui/react';
+import { Avatar, Box, ChakraProvider, Flex, Link, VStack, Text, Image } from '@chakra-ui/react';
 import useRequireAuth from '../utils/useRequireAuth';
 
 type BottomNavItem = {
@@ -53,16 +53,16 @@ const HistoryPage: React.FC = () => {
           <Box p={4}>
             <VStack spacing={4} mt={4} maxWidth={400}>
               <Flex alignItems="center">
-                <Avatar name="John Doe" size="sm" />
-                <Text ml={2}>History item 1</Text>
+                <Image src='/images/book.png' alt='book' />
+                <Text fontSize='2xl' ml={5}>Fight Club (Liked)</Text>
               </Flex>
               <Flex alignItems="center">
-                <Avatar name="Jane Smith" size="sm" />
-                <Text ml={2}>History item 2</Text>
+                <Image src='/images/book-2.png' alt='book' />
+                <Text fontSize='2xl' ml={5}>Fight Club (Disliked)</Text>
               </Flex>
               <Flex alignItems="center">
-                <Avatar name="John Doe" size="sm" />
-                <Text ml={2}>History item 3</Text>
+                <Image src='/images/book-3.png' alt='book' />
+                <Text fontSize='2xl' ml={5}>Fight Club (Liked)</Text>
               </Flex>
             </VStack>
           </Box>
