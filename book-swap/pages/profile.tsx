@@ -76,16 +76,16 @@ const ProfilePage: React.FC = () => {
           const firestore = getFirestore();
           const userBooksRef = doc(firestore, 'userBooks', userId);
           const userBooksSnapshot = await getDoc(userBooksRef);
-    
+
           if (userBooksSnapshot.exists()) {
             const userBooksData = userBooksSnapshot.data();
             const books = userBooksData?.books || [];
-    
+
             const updatedUserBooks = books.map((book: any) => {
               const pictureURL = book.picture;
               return { ...book, picture: pictureURL };
             });
-    
+
             setUserBooks(updatedUserBooks);
           }
         }
@@ -94,8 +94,8 @@ const ProfilePage: React.FC = () => {
       }
     };
 
-    fetchUserProfile();
     fetchUserBooks();
+    fetchUserProfile();
   }, [userId]);
 
   useEffect(() => {
