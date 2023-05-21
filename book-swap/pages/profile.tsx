@@ -45,6 +45,8 @@ const ProfilePage: React.FC = () => {
   const auth = getAuth();
   const userId = auth.currentUser?.uid;
   const [userBooks, setUserBooks] = useState<UserBook[]>([]);
+  const [selectedPicture, setSelectedPicture] = useState<File | null>(null);
+
 
   const handleNavItemClicked = (path: string) => {
     router.push(path);
@@ -130,46 +132,63 @@ const ProfilePage: React.FC = () => {
   };
 
  
-  const handlePictureUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePictureUpload = async () => {
     try {
-      const file = e.target.files[0];
+      if (!selectedPicture) {
+        return;
+      }
+
+      const file = selectedPicture;
       const storage = getStorage();
       const userId = auth.currentUser?.uid;
-      const timestamp = Date.now(); // Get the current timestamp
+      const timestamp = Date.now();
       const picturePath = `bookPictures/${userId}/${bookTitle}_${timestamp}`;
-  
+
       const pictureRef = ref(storage, picturePath);
 
       const uploadTask = uploadBytesResumable(pictureRef, file);
 
-      uploadTask.on('state_changed', (_snapshot) => {
-        // handle upload progress or other events if needed
-      }, (error) => {
-        // handle error
-        console.error('Error uploading picture:', error);
-      }, async () => {
-        // upload complete
-        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-  
-        const userBook: UserBook = {
-          title: bookTitle,
-          author: bookAuthor,
-          genres: selectedGenres,
-          picture: downloadURL, // Store the download URL instead of the picture path
-          token: ''
-        };
-  
-        setUserBooks((prevUserBooks) => [...prevUserBooks, userBook]);
-  
-        const firestore = getFirestore();
-        const userBooksRef = collection(firestore, 'userBooks');
-        const userBookDocRef = doc(userBooksRef, userId);
-        await setDoc(userBookDocRef, { books: [...userBooks, userBook] }, { merge: true });
-      });
+      uploadTask.on(
+        'state_changed',
+        (_snapshot) => {
+          // handle upload progress or other events if needed
+        },
+        (error) => {
+          // handle error
+          console.error('Error uploading picture:', error);
+        },
+        async () => {
+          // upload complete
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+
+          setBookTitle('');
+          setBookAuthor('');
+          setSelectedGenres([]);
+          setSelectedPicture(null); // Reset the selected picture
+
+          setIsModalOpen(false);
+
+          const userBook: UserBook = {
+            title: bookTitle,
+            author: bookAuthor,
+            genres: selectedGenres,
+            picture: downloadURL,
+            token: '',
+          };
+
+          setUserBooks((prevUserBooks) => [...prevUserBooks, userBook]);
+
+          const firestore = getFirestore();
+          const userBooksRef = collection(firestore, 'userBooks');
+          const userBookDocRef = doc(userBooksRef, userId);
+          await setDoc(userBookDocRef, { books: [...userBooks, userBook] }, { merge: true });
+        }
+      );
     } catch (error) {
       console.error('Error uploading picture:', error);
     }
   };
+  
   
 
 const handleUpload = async () => {
@@ -195,6 +214,7 @@ const handleUpload = async () => {
   } catch (error) {
     console.error('Error uploading book:', error);
   }
+  handlePictureUpload();
 };
 
 
@@ -251,19 +271,27 @@ const handleUpload = async () => {
             </Box>
   
             <Box mb={4}>
-              <Heading as="h2" size="md" mb={2}>Books on the shelf</Heading>
-              {userBooks.map((book) => (
-                <Box key={book.title} mb={4}>
-    <img
-      src={book.picture} // Update the src attribute here
-      alt={book.title}
-      style={{ maxWidth: '200px' }}
-    />
-                  <Heading as="h3" size="sm" mt={2}>{book.title}</Heading>
-                  <Heading as="h4" size="xs" mt={1}>{book.author}</Heading>
-                </Box>
-              ))}
+            <Heading as="h2" size="md" mb={2}>
+              Books on the shelf
+            </Heading>
+            <Box overflowX="auto" whiteSpace="nowrap">
+              {userBooks.length > 0 ? (
+                userBooks.map((book) => (
+                  <Box key={book.title} display="inline-block" width="200px" mr={4}>
+                    <img src={book.picture} alt={book.title} style={{ maxWidth: '100px' }} />
+                    <Heading as="h3" size="sm" mt={2}>
+                      {book.title}
+                    </Heading>
+                    <Heading as="h4" size="xs" mt={1}>
+                      {book.author}
+                    </Heading>
+                  </Box>
+                ))
+              ) : (
+                <p>No books found.</p>
+              )}
             </Box>
+          </Box>
   
             <Box mb={4}>
               <Heading as="h2" size="md" mb={2}>Upload Book</Heading>
@@ -326,11 +354,15 @@ const handleUpload = async () => {
             <Box mb={4}>
               <FormControl mt={4}>
                 <FormLabel>Picture</FormLabel>
-                <Input type="file" onChange={handlePictureUpload} />
+                <Input type="file" onChange={(e) => setSelectedPicture(e.target.files?.[0] || null)} />
               </FormControl>
             </Box>
-            <Button colorScheme="blue" mt={4} onClick={handleUpload}>Upload</Button>
-            <Button colorScheme="gray" mt={4} ml={2} onClick={handleModalClose}>Cancel</Button>
+            <Button colorScheme="blue" mt={4} onClick={handleUpload}>
+              Upload
+            </Button>
+            <Button colorScheme="gray" mt={4} ml={2} onClick={handleModalClose}>
+              Cancel
+            </Button>
           </Box>
         </Box>
       )}
