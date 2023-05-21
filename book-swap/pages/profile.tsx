@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { getAuth } from 'firebase/auth';
-import { Box, ChakraProvider, Stack, Button, Heading, Menu, MenuButton, MenuList, MenuItemOption, MenuOptionGroup, FormControl, FormLabel, Input, VStack, Link, Flex } from '@chakra-ui/react';
-import { getDoc, getFirestore, where, query, collection, doc, setDoc, getDocs } from 'firebase/firestore'; // Import the 'query' function
-import { getDownloadURL, getStorage, ref, uploadBytes, uploadBytesResumable } from 'firebase/storage';
+import { Alert, AlertIcon, Box, ChakraProvider, Stack, Button, Heading, Menu, MenuButton, MenuList, MenuItemOption, MenuOptionGroup, FormControl, FormLabel, Input, VStack, Link, Flex, Textarea } from '@chakra-ui/react';
+import { getDoc, getFirestore, collection, doc, setDoc, getDocs } from 'firebase/firestore'; // Import the 'query' function
+import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import useRequireAuth from '../utils/useRequireAuth';
 
 type BottomNavItem = {
@@ -46,6 +46,7 @@ const ProfilePage: React.FC = () => {
   const userId = auth.currentUser?.uid;
   const [userBooks, setUserBooks] = useState<UserBook[]>([]);
   const [selectedPicture, setSelectedPicture] = useState<File | null>(null);
+  const [isProfileUpdated, setIsProfileUpdated] = useState(false);
 
 
   const handleNavItemClicked = (path: string) => {
@@ -217,10 +218,64 @@ const handleUpload = async () => {
   handlePictureUpload();
 };
 
+const handleDeleteBook = async (book: UserBook) => {
+  try {
+    // Delete the book from the userBooks collection in Firestore
+    const firestore = getFirestore();
+    const userBooksRef = collection(firestore, 'userBooks');
+    const userId = auth.currentUser?.uid;
+    if (!userId) {
+      throw new Error('User ID not found');
+    }
+    const userBookDocRef = doc(userBooksRef, userId);
+    const userBookDocSnapshot = await getDoc(userBookDocRef);
+    if (userBookDocSnapshot.exists()) {
+      const userBooksData = userBookDocSnapshot.data();
+      const books = userBooksData?.books || [];
+      const updatedBooks = books.filter((b: UserBook) => b.token !== book.token);
+      await setDoc(userBookDocRef, { books: updatedBooks }, { merge: true });
+    }
+
+    // Perform any additional cleanup or actions required
+
+    // Update the state to reflect the deleted book
+    setUserBooks((prevUserBooks) => prevUserBooks.filter((b: UserBook) => b.token !== book.token));
+  } catch (error) {
+    console.error('Error deleting book:', error);
+  }
+};
+
+
+
+const handleSaveChanges = async () => {
+  try {
+    const firestore = getFirestore();
+    const userDocRef = doc(firestore, 'userProfiles', userId);
+    await setDoc(userDocRef, userProfile); // Assumes userProfile is updated with the edited name and description
+    // Perform other necessary actions to save the changes
+
+    setIsProfileUpdated(true); // Set the flag to display the success message
+  } catch (error) {
+    console.error('Error saving changes:', error);
+  }
+};
+
+useEffect(() => {
+  if (isProfileUpdated) {
+    const timeout = setTimeout(() => {
+      setIsProfileUpdated(false); // Reset the flag to hide the success message
+    }, 3000); // Delay in milliseconds (3 seconds)
+
+    return () => clearTimeout(timeout); // Cleanup function to clear the timeout when the component is unmounted or the flag changes
+  }
+}, [isProfileUpdated]);
+
+
 
   if (!currentUser) {
     return <div>Loading...</div>;
   }
+
 
   return (
     <ChakraProvider>
@@ -250,11 +305,11 @@ const handleUpload = async () => {
   
             <Box mb={4}>
               <Heading as="h2" size="md" mb={2}>Name</Heading>
-              <Button variant="outline">{userProfile?.name}</Button>
+              <Input variant="outline" value={userProfile?.name} onChange={(e) => setUserProfile({ ...userProfile, name: e.target.value })} />
             </Box>
             <Box mb={4}>
               <Heading as="h2" size="md" mb={2}>About me</Heading>
-              <Button variant="outline">{userProfile?.description}</Button>
+              <Textarea variant="outline" value={userProfile?.description} onChange={(e) => setUserProfile({ ...userProfile, description: e.target.value })} />
             </Box>
   
             <Box mb={4}>
@@ -277,15 +332,17 @@ const handleUpload = async () => {
             <Box overflowX="auto" whiteSpace="nowrap">
               {userBooks.length > 0 ? (
                 userBooks.map((book) => (
-                  <Box key={book.title} display="inline-block" width="200px" mr={4}>
-                    <img src={book.picture} alt={book.title} style={{ maxWidth: '100px' }} />
-                    <Heading as="h3" size="sm" mt={2}>
-                      {book.title}
-                    </Heading>
-                    <Heading as="h4" size="xs" mt={1}>
-                      {book.author}
-                    </Heading>
-                  </Box>
+<Box key={book.title} display="inline-block" width="200px" mr={4}>
+  <Button variant="link" onClick={() => handleDeleteBook(book)}>X</Button>
+  <img src={book.picture} alt={book.title} style={{ maxWidth: '100px' }} />
+  <Heading as="h3" size="sm" mt={2}>
+    {book.title}
+  </Heading>
+  <Heading as="h4" size="xs" mt={1}>
+    {book.author}
+  </Heading>
+</Box>
+
                 ))
               ) : (
                 <p>No books found.</p>
@@ -297,6 +354,13 @@ const handleUpload = async () => {
               <Heading as="h2" size="md" mb={2}>Upload Book</Heading>
               <Button colorScheme="blue" onClick={handleModalOpen}>Upload</Button>
             </Box>
+            {isProfileUpdated && (
+        <Alert status='success'>
+          <AlertIcon />
+          Profile updated!
+        </Alert>
+      )}
+      <Button colorScheme="blue" onClick={handleSaveChanges}>Save Changes</Button>
           </Box>
         </Box>
   
