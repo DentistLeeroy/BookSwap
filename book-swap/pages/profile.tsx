@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { getAuth } from 'firebase/auth';
 import { Alert, AlertIcon, Box, ChakraProvider, Stack, Button, Heading, Menu, MenuButton, MenuList, MenuItemOption, MenuOptionGroup, FormControl, FormLabel, Input, VStack, Link, Flex, Textarea } from '@chakra-ui/react';
-import { getDoc, getFirestore, collection, doc, setDoc, getDocs } from 'firebase/firestore'; // Import the 'query' function
+import { getDoc, getFirestore, collection, doc, setDoc, getDocs } from 'firebase/firestore';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import useRequireAuth from '../utils/useRequireAuth';
 
