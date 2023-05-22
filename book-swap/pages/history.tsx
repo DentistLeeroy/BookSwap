@@ -2,6 +2,8 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import { Avatar, Box, ChakraProvider, Flex, Link, VStack, Text, Image } from '@chakra-ui/react';
 import useRequireAuth from '../utils/useRequireAuth';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 
 type BottomNavItem = {
   label: string;
@@ -20,6 +22,8 @@ const HistoryPage: React.FC = () => {
   const { pathname } = router;
 
   const currentUser = useRequireAuth();
+  const likedBooks = useSelector((state: RootState) => state.book?.likedBooks || []);
+  const dislikedBooks = useSelector((state: RootState) => state.book?.dislikedBooks || []);
 
   const handleNavItemClicked = (path: string) => {
     router.push(path);
@@ -52,18 +56,22 @@ const HistoryPage: React.FC = () => {
         <Flex flex={1} justifyContent="center" alignItems="center" bg="gray.100">
           <Box p={4}>
             <VStack spacing={4} mt={4} maxWidth={400}>
-              <Flex alignItems="center">
-                <Image src='/images/book.png' alt='book' />
-                <Text fontSize='2xl' ml={5}>Fight Club (Liked)</Text>
-              </Flex>
-              <Flex alignItems="center">
-                <Image src='/images/book-2.png' alt='book' />
-                <Text fontSize='2xl' ml={5}>Fight Club (Disliked)</Text>
-              </Flex>
-              <Flex alignItems="center">
-                <Image src='/images/book-3.png' alt='book' />
-                <Text fontSize='2xl' ml={5}>Fight Club (Liked)</Text>
-              </Flex>
+              {likedBooks.map((book) => (
+                <Flex key={book.id} alignItems="center">
+                  <Image src={book.image} alt="book" width={89} height={134} />
+                  <Text fontSize="2xl" ml={5}>
+                    {book.title} (Liked)
+                  </Text>
+                </Flex>
+              ))}
+              {dislikedBooks.map((book) => (
+                <Flex key={book.id} alignItems="center">
+                  <Image src={book.image} alt="book" width={89} height={134} />
+                  <Text fontSize="2xl" ml={5}>
+                    {book.title} (Disliked)
+                  </Text>
+                </Flex>
+              ))}
             </VStack>
           </Box>
         </Flex>

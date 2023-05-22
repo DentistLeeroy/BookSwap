@@ -3,6 +3,9 @@ import { useRouter } from 'next/router';
 import { Avatar, Box, Button, ChakraProvider, Flex, Icon, Image, Text, VStack, Link } from '@chakra-ui/react';
 import { ChevronRightIcon, CloseIcon, StarIcon } from '@chakra-ui/icons';
 import useRequireAuth from '../utils/useRequireAuth';
+import { useDispatch } from 'react-redux';
+import { likeBook, dislikeBook } from '../redux/store';
+
 
 type BottomNavItem = {
   label: string;
@@ -38,6 +41,26 @@ const books: Book[] = [
     title: 'My book cover',
     image: '/images/book-3.png',
   },
+  {
+    id: 4,
+    title: 'Normal People',
+    image: '/images/book-4.jpg',
+  },
+  {
+    id: 5,
+    title: 'The imperfections of memory',
+    image: '/images/book-5.jpg',
+  },
+  {
+    id: 6,
+    title: 'The Light Beyond The Garden Wall',
+    image: '/images/book-6.jpg',
+  },
+  {
+    id: 7,
+    title: 'Follow Me to Ground',
+    image: '/images/book-7.jpg',
+  },
   // Add more books here
 ];
 
@@ -53,21 +76,25 @@ const HomePage: React.FC = () => {
     router.push(path);
   };
 
-  const handleLike = () => {
-    if (currentBookIndex < books.length - 1) {
-      setCurrentBookIndex((prevIndex) => prevIndex + 1);
-    } else {
-      setNoNewBooks(true);
-    }
-  };
+  const dispatch = useDispatch();
 
-  const handleDislike = () => {
-    if (currentBookIndex < books.length - 1) {
-      setCurrentBookIndex((prevIndex) => prevIndex + 1);
-    } else {
-      setNoNewBooks(true);
-    }
-  };
+const handleLike = () => {
+  if (currentBookIndex < books.length - 1) {
+    dispatch(likeBook(currentBook));
+    setCurrentBookIndex((prevIndex) => prevIndex + 1);
+  } else {
+    setNoNewBooks(true);
+  }
+};
+
+const handleDislike = () => {
+  if (currentBookIndex < books.length - 1) {
+    dispatch(dislikeBook(currentBook));
+    setCurrentBookIndex((prevIndex) => prevIndex + 1);
+  } else {
+    setNoNewBooks(true);
+  }
+};
 
   const currentBook = books[currentBookIndex];
 
@@ -107,7 +134,7 @@ const HomePage: React.FC = () => {
             </Box>
           ) : (
             <Flex direction="column" alignItems="center">
-              <Image src={currentBook.image} alt={currentBook.title} maxH={400} objectFit="cover" borderRadius="md" />
+              <Image src={currentBook.image} alt={currentBook.title} width={89} height={134} objectFit="cover" borderRadius="md" />
               <VStack spacing={4} mt={4}>
                 <Text fontSize="2xl">{currentBook.title}</Text>
                 <Flex>

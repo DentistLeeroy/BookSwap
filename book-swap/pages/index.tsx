@@ -6,6 +6,7 @@ import { Auth, getAuth, sendPasswordResetEmail, signInWithEmailAndPassword } fro
 import AuthDetails from '../app/firebase/server/AuthDetails';
 import { useRouter } from 'next/router';
 
+
 const auth = getAuth();
 
 const LoginPage = () => {
