@@ -4,6 +4,7 @@ import { Avatar, Box, ChakraProvider, Flex, Link, VStack, Text, Image } from '@c
 import useRequireAuth from '../utils/useRequireAuth';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import { MdFavorite, MdThumbDown } from "react-icons/md";
 
 type BottomNavItem = {
   label: string;
@@ -36,7 +37,7 @@ const HistoryPage: React.FC = () => {
 
   return (
     <ChakraProvider>
-      <Flex height="100vh" width="100vw">
+      <Flex width="100vw">
         <VStack align="flex-start" spacing={4} pr={8} borderRight="1px solid" borderColor="gray.200">
           {/* Render bottom navigation */}
           {bottomNavItems.map((item) => (
@@ -57,24 +58,25 @@ const HistoryPage: React.FC = () => {
           <Box p={4}>
             <VStack spacing={4} mt={4} maxWidth={400}>
               {likedBooks.map((book) => (
-                <Flex key={book.id} alignItems="center">
+                <Flex key={book.id} alignItems="center" bg="white" p={4} borderRadius="md" boxShadow="md">
                   <Image src={book.image} alt="book" width={89} height={134} />
-                  <Text fontSize="2xl" ml={5}>
-                    {book.title} (Liked)
+                  <Text fontSize="2xl" ml={5} fontWeight="bold">
+                    {book.title} <MdFavorite color="red" />
                   </Text>
                 </Flex>
               ))}
               {dislikedBooks.map((book) => (
-                <Flex key={book.id} alignItems="center">
+                <Flex key={book.id} alignItems="center" bg="white" p={4} borderRadius="md" boxShadow="md">
                   <Image src={book.image} alt="book" width={89} height={134} />
-                  <Text fontSize="2xl" ml={5}>
-                    {book.title} (Disliked)
+                  <Text fontSize="2xl" ml={5} fontWeight="bold">
+                    {book.title} <MdThumbDown color="blue" />
                   </Text>
                 </Flex>
               ))}
             </VStack>
           </Box>
         </Flex>
+
       </Flex>
     </ChakraProvider>
   );
