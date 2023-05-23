@@ -53,39 +53,168 @@ const MessagesPage: React.FC = () => {
 
         {/* Render your messages page content here */}
         <Flex flex={1} justifyContent="center" alignItems="center" bg="gray.100">
-          <Box p={4}>
-            <VStack spacing={4} mt={4} maxWidth={400}>
+          <Box bg="gray.100" p={6} borderRadius="md">
+            <VStack spacing={6} align="stretch">
               <Flex alignItems="center">
-                <Avatar name="John Doe" size="sm" />
-                <Text ml={2}>Hey there! Did you know...</Text>
+                {/* Avatar for the first speaker */}
+                <Avatar
+                  name="John Doe"
+                  size="md"
+                  src="/images/avatar-7.png"
+                />
+                <Box
+                  ml={3}
+                  p={3}
+                  bg="white"
+                  borderRadius="md"
+                  boxShadow="md"
+                >
+                  <Text fontSize="lg" color="gray.800">
+                    <a
+                      href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      color="blue.500"
+                    >
+                      See you there!
+                    </a>
+                  </Text>
+                </Box>
               </Flex>
               <Flex alignItems="center">
-                <Avatar name="Jane Smith" size="sm" />
-                <Text ml={2}>...that Rick Astley...</Text>
+                {/* Avatar for the second speaker */}
+                <Avatar
+                  name="Jane Smith"
+                  size="md"
+                  src="/images/avatar-6.png"
+                />
+                <Box
+                  ml={3}
+                  p={3}
+                  bg="white"
+                  borderRadius="md"
+                  boxShadow="md"
+                >
+                  <Text fontSize="lg" color="gray.800">
+                    <a
+                      href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      color="blue.500"
+                    >
+                      I don’t think I will.
+                    </a>
+                  </Text>
+                </Box>
               </Flex>
               <Flex alignItems="center">
-                <Avatar name="John Doe" size="sm" />
-                <Text ml={2}>...gave us the amazing song...</Text>
+                {/* Avatar for the first speaker */}
+                <Avatar
+                  name="John Doe"
+                  size="md"
+                  src="/images/avatar-5.png"
+                />
+                <Box
+                  ml={3}
+                  p={3}
+                  bg="white"
+                  borderRadius="md"
+                  boxShadow="md"
+                >
+                  <Text fontSize="lg" color="gray.800">
+                    <a
+                      href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      color="blue.500"
+                    >
+                      Come on, it’s a good deal...
+                    </a>
+                  </Text>
+                </Box>
               </Flex>
               <Flex alignItems="center">
-                <Avatar name="Jane Smith" size="sm" />
-                <Text ml={2}>...called Never Gonna Give You Up?</Text>
+                {/* Avatar for the second speaker */}
+                <Avatar
+                  name="Jane Smith"
+                  size="md"
+                  src="/images/avatar-4.png"
+                />
+                <Box
+                  ml={3}
+                  p={3}
+                  bg="white"
+                  borderRadius="md"
+                  boxShadow="md"
+                >
+                  <Text fontSize="lg" color="gray.800">
+                    <a
+                      href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      color="blue.500"
+                    >
+                      So what’s your opinion on that?
+                    </a>
+                  </Text>
+                </Box>
               </Flex>
               <Flex alignItems="center">
-                <Avatar name="John Doe" size="sm" />
-                <Text ml={2}>...It's a classic!</Text>
+                {/* Avatar for the first speaker */}
+                <Avatar
+                  name="John Doe"
+                  size="md"
+                  src="/images/avatar-3.png"
+                />
+                <Box
+                  ml={3}
+                  p={3}
+                  bg="white"
+                  borderRadius="md"
+                  boxShadow="md"
+                >
+                  <Text fontSize="lg" color="gray.800">
+                    <a
+                      href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      color="blue.500"
+                    >
+                      The book seems too worn out.
+                    </a>
+                  </Text>
+                </Box>
               </Flex>
               <Flex alignItems="center">
-                <Avatar name="Jane Smith" size="sm" />
-                <Text ml={2}>
-                  ...Here's a little surprise for you:{' '}
-                  <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" rel="noopener noreferrer">
-                    Click here!
-                  </a>
-                </Text>
+                {/* Avatar for the second speaker */}
+                <Avatar
+                  name="Jane Smith"
+                  size="md"
+                  src="/images/avatar.png"
+                />
+                <Box
+                  ml={3}
+                  p={3}
+                  bg="white"
+                  borderRadius="md"
+                  boxShadow="md"
+                >
+                  <Text fontSize="lg" color="gray.800">
+                    ...Here's a little surprise for you:{' '}
+                    <a
+                      href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      color="blue.500"
+                    >
+                      Click here!
+                    </a>
+                  </Text>
+                </Box>
               </Flex>
             </VStack>
           </Box>
+
         </Flex>
       </Flex>
     </ChakraProvider>
