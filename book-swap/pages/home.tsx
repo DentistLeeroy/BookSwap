@@ -136,7 +136,7 @@ const HomePage: React.FC = () => {
                 <>
                   <Image src={currentBook.image} alt={currentBook.title} width={89} height={134} objectFit="cover" borderRadius="md" />
                   <VStack spacing={4} mt={4}>
-                    <Text fontSize="2xl">{currentBook.title}</Text>
+                    <Text fontSize="2xl" color={'gray.100'}>{currentBook.title}</Text>
                     <Flex>
                       <Button
                         onClick={handleLike}
