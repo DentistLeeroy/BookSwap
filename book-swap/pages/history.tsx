@@ -37,7 +37,7 @@ const HistoryPage: React.FC = () => {
 
   return (
     <ChakraProvider>
-      <Flex width="100vw">
+      <Flex>
         <VStack align="flex-start" spacing={4} pr={8} borderRight="1px solid" borderColor="gray.200">
           {/* Render bottom navigation */}
           {bottomNavItems.map((item) => (

@@ -156,13 +156,9 @@ const HomePage: React.FC = () => {
                     </Flex>
                   </VStack>
                   <Box mt={4} textAlign="center">
-                    {currentBookIndex === books.length - 1 ? ( // Check if on the last book
+                    {currentBookIndex === books.length - 1 ? (
                       <Text>No new books</Text>
-                    ) : (
-                      <Button onClick={handleLike} colorScheme="teal" leftIcon={<Icon as={ChevronRightIcon} />} size="lg">
-                        Next Book
-                      </Button>
-                    )}
+                    ) : null}
                   </Box>
                 </>
               )}

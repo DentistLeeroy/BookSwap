@@ -279,7 +279,7 @@ useEffect(() => {
 
   return (
     <ChakraProvider>
-      <Flex height="100vh" width="100vw">
+      <Flex>
       <VStack align="flex-start" spacing={4} pr={8} borderRight="1px solid" borderColor="gray.200">
         {/* Render navigation */}
         {bottomNavItems.map((item) => (
