@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { likeBook, dislikeBook } from '../redux/store';
 import { getStorage, ref, listAll, getDownloadURL } from 'firebase/storage';
 import { app } from '../app/firebase/server/firebase';
+import AuthDetails from '../app/firebase/server/AuthDetails';
 
 const storage = getStorage(app);
 
@@ -115,6 +116,7 @@ const HomePage: React.FC = () => {
               {item.label}
             </Link>
           ))}
+          <AuthDetails />
         </VStack>
 
         {/* Render your home page content here */}

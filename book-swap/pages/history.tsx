@@ -5,6 +5,7 @@ import useRequireAuth from '../utils/useRequireAuth';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { MdFavorite, MdThumbDown } from "react-icons/md";
+import AuthDetails from '@/app/firebase/server/AuthDetails';
 
 type BottomNavItem = {
   label: string;
@@ -51,6 +52,7 @@ const HistoryPage: React.FC = () => {
               {item.label}
             </Link>
           ))}
+          <AuthDetails />
         </VStack>
 
         {/* Render your history page content here */}

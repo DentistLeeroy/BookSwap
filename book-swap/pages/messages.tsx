@@ -2,6 +2,7 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import { Avatar, Box, ChakraProvider, Flex, Link, VStack, Text } from '@chakra-ui/react';
 import useRequireAuth from '../utils/useRequireAuth';
+import AuthDetails from '@/app/firebase/server/AuthDetails';
 
 
 type BottomNavItem = {
@@ -47,6 +48,7 @@ const MessagesPage: React.FC = () => {
               {item.label}
             </Link>
           ))}
+          <AuthDetails />
         </VStack>
 
         {/* Render your messages page content here */}

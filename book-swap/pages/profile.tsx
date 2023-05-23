@@ -5,6 +5,7 @@ import { Alert, AlertIcon, Box, ChakraProvider, Stack, Button, Heading, Menu, Me
 import { getDoc, getFirestore, collection, doc, setDoc, getDocs } from 'firebase/firestore';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import useRequireAuth from '../utils/useRequireAuth';
+import AuthDetails from '@/app/firebase/server/AuthDetails';
 
 type BottomNavItem = {
   label: string;
@@ -293,6 +294,7 @@ useEffect(() => {
             {item.label}
           </Link>
         ))}
+        <AuthDetails />
       </VStack>
   
       <Box width="100vw" minHeight="100vh" display="flex" justifyContent="center" alignItems="center" bg="gray.100">

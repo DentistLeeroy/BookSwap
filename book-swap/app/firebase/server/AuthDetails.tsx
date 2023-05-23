@@ -1,50 +1,49 @@
 import React, { useEffect, useState } from "react";
-import { auth} from "./firebase";
+import { auth } from "./firebase";
 import { User, signOut } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from 'next/router';
-
+import { Box, Button } from "@chakra-ui/react";
 
 const AuthDetails = () => {
   const [authUser, setAuthUser] = useState<User | null>(null);
-  const [userID, setUserID] = useState<string | null>(null); // State variable to store the user ID
-  const router = useRouter(); // Access the router object from next/router
-
+  const [userID, setUserID] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setAuthUser(user);
-        setUserID(user.uid); // Set the user ID when the user is authenticated
+        setUserID(user.uid);
       } else {
         setAuthUser(null);
-        setUserID(null); // Clear the user ID when the user is not authenticated
+        setUserID(null);
       }
     });
 
-    return () => unsubscribe(); // Clean up the listener when the component unmounts
+    return () => unsubscribe();
   }, []);
 
   const userSignOut = () => {
     signOut(auth)
       .then(() => {
         console.log('Sign out successful');
-        router.push('/'); // Redirect to '/' after signing out
+        router.push('/');
       })
       .catch((error) => console.log(error));
   };
 
   return (
-    <div>
+    <Box textAlign="center" mt={4}>
       {authUser ? (
         <>
-          <p>{`Signed In as ${authUser.email}`}</p>
-          <button onClick={userSignOut}>Sign Out</button>
+          <Box as="p" padding={"1rem"}>{`${authUser.email}`}</Box>
+          <Button colorScheme="teal" onClick={userSignOut} mt={4}>Sign Out</Button>
         </>
       ) : (
-        <p>Signed out</p>
+        <Box as="p">Signed out</Box>
       )}
-    </div>
+    </Box>
   );
 };
 
