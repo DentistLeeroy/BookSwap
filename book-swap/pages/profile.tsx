@@ -137,19 +137,19 @@ const ProfilePage: React.FC = () => {
   const handlePictureUpload = async () => {
     try {
       if (!selectedPicture) {
-        return;
+        return; // If no picture is selected, return early
       }
-
-      const file = selectedPicture;
-      const storage = getStorage();
-      const userId = auth.currentUser?.uid;
-      const timestamp = Date.now();
-      const picturePath = `bookPictures/${userId}/${bookTitle}_${timestamp}`;
-
-      const pictureRef = ref(storage, picturePath);
-
-      const uploadTask = uploadBytesResumable(pictureRef, file);
-
+  
+      const file = selectedPicture; // Get the selected picture file
+      const storage = getStorage(); // Get the Firebase storage instance
+      const userId = auth.currentUser?.uid; // Get the current user's ID
+      const timestamp = Date.now(); // Get the current timestamp
+      const picturePath = `bookPictures/${userId}/${bookTitle}_${timestamp}`; // Generate the path for the uploaded picture
+  
+      const pictureRef = ref(storage, picturePath); // Create a reference to the picture path in the storage
+  
+      const uploadTask = uploadBytesResumable(pictureRef, file); // Upload the picture file to the storage
+  
       uploadTask.on(
         'state_changed',
         (_snapshot) => {
@@ -157,19 +157,20 @@ const ProfilePage: React.FC = () => {
         },
         (error) => {
           // handle error
-          console.error('Error uploading picture:', error);
+          console.error('Error uploading picture:', error); // Log the error if there's an error during upload
         },
         async () => {
           // upload complete
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref); // Get the download URL of the uploaded picture
+  
+          // Reset form values and close the modal
           setBookTitle('');
           setBookAuthor('');
           setSelectedGenres([]);
-          setSelectedPicture(null); // Reset the selected picture
-
+          setSelectedPicture(null);
+  
           setIsModalOpen(false);
-
+  
           const userBook: UserBook = {
             title: bookTitle,
             author: bookAuthor,
@@ -177,47 +178,48 @@ const ProfilePage: React.FC = () => {
             picture: downloadURL,
             token: '',
           };
-
-          setUserBooks((prevUserBooks) => [...prevUserBooks, userBook]);
-
-          const firestore = getFirestore();
-          const userBooksRef = collection(firestore, 'userBooks');
-          const userBookDocRef = doc(userBooksRef, userId);
-          await setDoc(userBookDocRef, { books: [...userBooks, userBook] }, { merge: true });
+  
+          setUserBooks((prevUserBooks) => [...prevUserBooks, userBook]); // Update the user's books list in the local state
+  
+          const firestore = getFirestore(); // Get the Firebase Firestore instance
+          const userBooksRef = collection(firestore, 'userBooks'); // Reference the 'userBooks' collection
+          const userBookDocRef = doc(userBooksRef, userId); // Reference the document for the current user's books
+          await setDoc(userBookDocRef, { books: [...userBooks, userBook] }, { merge: true }); // Add the userBook to Firestore
         }
       );
     } catch (error) {
-      console.error('Error uploading picture:', error);
+      console.error('Error uploading picture:', error); // Log the error if there's an error in the picture upload process
     }
   };
-
-
-
+  
   const handleUpload = async () => {
     try {
-      const auth = getAuth();
-      const userId = auth.currentUser?.uid;
+      const auth = getAuth(); // Get the Firebase authentication instance
+      const userId = auth.currentUser?.uid; // Get the current user's ID
       if (!userId) {
-        throw new Error('User ID not found');
+        throw new Error('User ID not found'); // Throw an error if the user ID is not found
       }
-
-      const firestore = getFirestore();
-      const userBooksRef = collection(firestore, 'userBooks');
-      const timestamp = Date.now();
-      const picturePath = `bookPictures/${userId}/${bookTitle}_${timestamp}`;
+  
+      const firestore = getFirestore(); // Get the Firebase Firestore instance
+      const userBooksRef = collection(firestore, 'userBooks'); // Reference the 'userBooks' collection
+      const timestamp = Date.now(); // Get the current timestamp
+      const picturePath = `bookPictures/${userId}/${bookTitle}_${timestamp}`; // Generate the path for the uploaded picture
+  
+      // Create a new document in Firestore with the book details
       await setDoc(doc(userBooksRef, userId), {
         title: bookTitle,
         author: bookAuthor,
         genres: selectedGenres,
         picture: picturePath,
       });
-
-      setIsModalOpen(false);
+  
+      setIsModalOpen(false); // Close the modal after successful upload
     } catch (error) {
-      console.error('Error uploading book:', error);
+      console.error('Error uploading book:', error); // Log the error if there's an error in the book upload process
     }
-    handlePictureUpload();
+    handlePictureUpload(); // Call the handlePictureUpload function to upload the picture
   };
+  
 
   const handleDeleteBook = async (book: UserBook) => {
     try {
@@ -252,10 +254,9 @@ const ProfilePage: React.FC = () => {
     try {
       const firestore = getFirestore();
       const userDocRef = doc(firestore, 'userProfiles', userId);
-      await setDoc(userDocRef, userProfile); // Assumes userProfile is updated with the edited name and description
-      // Perform other necessary actions to save the changes
+      await setDoc(userDocRef, userProfile);
 
-      setIsProfileUpdated(true); // Set the flag to display the success message
+      setIsProfileUpdated(true);
     } catch (error) {
       console.error('Error saving changes:', error);
     }

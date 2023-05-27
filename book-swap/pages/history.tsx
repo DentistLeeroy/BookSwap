@@ -63,7 +63,7 @@ const HistoryPage: React.FC = () => {
                 <Flex key={book.id} alignItems="center" bg="white" p={4} borderRadius="md" boxShadow="md">
                   <Image src={book.image} alt="book" width={89} height={134} />
                   <Text fontSize="2xl" ml={5} fontWeight="bold" color={'white'}>
-                    {book.title} <MdFavorite color="red" />
+                   <MdFavorite color="red" />
                   </Text>
                 </Flex>
               ))}
@@ -71,7 +71,7 @@ const HistoryPage: React.FC = () => {
                 <Flex key={book.id} alignItems="center" bg="white" p={4} borderRadius="md" boxShadow="md">
                   <Image src={book.image} alt="book" width={89} height={134} />
                   <Text fontSize="2xl" ml={5} fontWeight="bold" color={'white'}>
-                    {book.title} <MdThumbDown color="blue" />
+                    <MdThumbDown color="blue" />
                   </Text>
                 </Flex>
               ))}

@@ -17,18 +17,22 @@ const initialState: BookState = {
   dislikedBooks: [],
 };
 
+// Creating a slice for managing book-related state
 const bookSlice = createSlice({
-  name: 'book',
-  initialState,
+  name: 'book', // Name of the slice
+  initialState, // Initial state of the slice
   reducers: {
+    // Reducer for liking a book
     likeBook: (state, action: PayloadAction<Book>) => {
-      state.likedBooks.push(action.payload);
+      state.likedBooks.push(action.payload); // Adding the liked book to the 'likedBooks' array in the state
     },
+    // Reducer for disliking a book
     dislikeBook: (state, action: PayloadAction<Book>) => {
-      state.dislikedBooks.push(action.payload);
+      state.dislikedBooks.push(action.payload); // Adding the disliked book to the 'dislikedBooks' array in the state
     },
   },
 });
+
 
 export const { likeBook, dislikeBook } = bookSlice.actions;
 
