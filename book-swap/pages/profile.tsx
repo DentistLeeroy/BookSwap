@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { getAuth } from 'firebase/auth';
 import { Alert, AlertIcon, Box, ChakraProvider, Stack, Button, Heading, Menu, MenuButton, MenuList, MenuItemOption, MenuOptionGroup, FormControl, FormLabel, Input, VStack, Link, Flex, Textarea } from '@chakra-ui/react';
-import { getDoc, getFirestore, collection, doc, setDoc, getDocs } from 'firebase/firestore';
+import theme from '@/app/chakra.theme';
+import { getDoc, getFirestore, collection, doc, setDoc, getDocs, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable, listAll } from 'firebase/storage';
 import useRequireAuth from '../utils/useRequireAuth';
 import AuthDetails from '@/app/firebase/server/AuthDetails';
@@ -250,19 +251,21 @@ const ProfilePage: React.FC = () => {
       if (userBookDocSnapshot.exists()) {
         const userBooksData = userBookDocSnapshot.data();
         const books = userBooksData?.books || [];
-        const updatedBooks = books.filter((b: UserBook) => b.token !== book.token);
-        await setDoc(userBookDocRef, { books: updatedBooks }, { merge: true });
+        const updatedBooks = books.filter((b: UserBook) => b.title !== book.title);
+        await updateDoc(userBookDocRef, { books: updatedBooks });
       }
-
+  
       // Perform any additional cleanup or actions required
-
+  
       // Update the state to reflect the deleted book
-      setUserBooks((prevUserBooks) => prevUserBooks.filter((b: UserBook) => b.token !== book.token));
+      setUserBooks((prevUserBooks) => prevUserBooks.filter((b: UserBook) => b.title !== book.title));
     } catch (error) {
       console.error('Error deleting book:', error);
     }
   };
-
+  
+  
+  
 
 
   const handleSaveChanges = async () => {
@@ -349,7 +352,7 @@ const ProfilePage: React.FC = () => {
               <Box width="fit-content">
                 <Stack spacing={2}>
                   {userProfile?.interests.map((interest) => (
-                    <Box key={interest} bg="blue.500" color="white" py={1} px={5} borderRadius="md">
+                    <Box key={interest} bg="blue.500" style={{ color: "#202020", backgroundColor: theme.colors.customButton }} py={1} px={5} borderRadius="md">
                       {interest}
                     </Box>
                   ))}

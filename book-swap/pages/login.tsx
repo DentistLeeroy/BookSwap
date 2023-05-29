@@ -96,7 +96,7 @@ const LoginPage = () => {
                   value={resetEmail}
                   onChange={(e) => setResetEmail(e.target.value)}
                 />
-                <Button className="resetBtn" type="button" onClick={handleResetPassword} colorScheme="blue">
+                <Button className="resetBtn" type="button" onClick={handleResetPassword} style={{ color: "#FFFFFF", backgroundColor: theme.colors.passresetButton }}>
                   Reset password
                 </Button>
               </Stack>
