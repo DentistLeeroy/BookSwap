@@ -4,7 +4,7 @@ import { getAuth } from 'firebase/auth';
 import { Alert, AlertIcon, Box, ChakraProvider, Stack, Button, Heading, Menu, MenuButton, MenuList, MenuItemOption, MenuOptionGroup, FormControl, FormLabel, Input, VStack, Link, Flex, Textarea } from '@chakra-ui/react';
 import theme from '@/app/chakra.theme';
 import { getDoc, getFirestore, collection, doc, setDoc, getDocs, updateDoc } from 'firebase/firestore';
-import { getDownloadURL, getStorage, ref, uploadBytesResumable, listAll } from 'firebase/storage';
+import { getDownloadURL, getStorage, ref, uploadBytesResumable, listAll, deleteObject, StorageReference } from 'firebase/storage';
 import useRequireAuth from '../utils/useRequireAuth';
 import AuthDetails from '@/app/firebase/server/AuthDetails';
 
@@ -22,12 +22,14 @@ const bottomNavItems: BottomNavItem[] = [
 ];
 
 type UserProfile = {
+  pictureURL: string;
   name: string;
   description: string;
   interests: string[];
 };
 
 type UserBook = {
+  id: any;
   title: string;
   author: string;
   genres: string[];
@@ -237,10 +239,13 @@ const ProfilePage: React.FC = () => {
   };
   
 
+
   const handleDeleteBook = async (book: UserBook) => {
     try {
-      // Delete the book from the userBooks collection in Firestore
       const firestore = getFirestore();
+      const storage = getStorage();
+  
+      // Step 1: Delete the book document from Firestore
       const userBooksRef = collection(firestore, 'userBooks');
       const userId = auth.currentUser?.uid;
       if (!userId) {
@@ -255,6 +260,19 @@ const ProfilePage: React.FC = () => {
         await updateDoc(userBookDocRef, { books: updatedBooks });
       }
   
+      // Step 2: Retrieve the URL of the book image from Firestore
+      const imagePath = book.picture;
+  
+      // Step 3: Extract the file path from the URL
+      const filePath = decodeURIComponent(imagePath.substring(imagePath.lastIndexOf('/') + 1, imagePath.indexOf('?')));
+  
+      // Step 4: Log the file path
+      console.log('File path:', filePath);
+  
+      // Step 5: Delete the corresponding file from Firebase Storage
+      const storageRef = ref(storage, filePath);
+      await deleteObject(storageRef);
+  
       // Perform any additional cleanup or actions required
   
       // Update the state to reflect the deleted book
@@ -264,9 +282,6 @@ const ProfilePage: React.FC = () => {
     }
   };
   
-  
-  
-
 
   const handleSaveChanges = async () => {
     try {
@@ -471,3 +486,7 @@ const ProfilePage: React.FC = () => {
 
 };
 export default ProfilePage;
+
+function child(bookPicturesRef: StorageReference, userId: string) {
+  throw new Error('Function not implemented.');
+}
