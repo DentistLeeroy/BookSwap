@@ -1,5 +1,8 @@
 {
   "devDependencies": {
     "cypress": "^12.12.0"
+  },
+  "dependencies": {
+    "react-lottie": "^1.2.3"
   }
 }
