@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { Avatar, Box, ChakraProvider, Flex, Link, VStack, Text, Image } from '@chakra-ui/react';
+import { Avatar, Box, ChakraProvider, Flex, Link, VStack, Text, Image, Button } from '@chakra-ui/react';
 import useRequireAuth from '../utils/useRequireAuth';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
@@ -26,9 +26,16 @@ const HistoryPage: React.FC = () => {
   const currentUser = useRequireAuth();
   const likedBooks = useSelector((state: RootState) => state.book?.likedBooks || []);
   const dislikedBooks = useSelector((state: RootState) => state.book?.dislikedBooks || []);
+  const [isNavigationOpen, setNavigationOpen] = useState(false);
+
+
 
   const handleNavItemClicked = (path: string) => {
     router.push(path);
+  };
+
+  const handleToggleNavigation = () => {
+    setNavigationOpen(!isNavigationOpen);
   };
 
   if (!currentUser) {
@@ -38,9 +45,25 @@ const HistoryPage: React.FC = () => {
 
   return (
     <ChakraProvider>
-      <Flex>
-        <VStack align="flex-start" spacing={4} pr={8} borderRight="1px solid" borderColor="gray.200">
-          {/* Render bottom navigation */}
+      <Flex  direction={{ base: 'column', md: 'row' }}bg="#edf2f7" minH="100vh">
+      <Button onClick={handleToggleNavigation}>☰</Button> {/* Hamburger menu button */}
+    <div style={{ position: 'relative', zIndex: isNavigationOpen ? 1 : 'auto' }}>
+      {isNavigationOpen && (
+        <VStack
+          position="absolute"
+          top={0}
+          left={0}
+          align="flex-start"
+          spacing={4}
+          pr={8}
+          borderRight="1px solid"
+          borderColor="gray.200"
+          bg="white"
+          p={4}
+          height="100vh"
+          overflow="auto"
+        >
+          {/* Render navigation */}
           {bottomNavItems.map((item) => (
             <Link
               key={item.path}
@@ -54,6 +77,7 @@ const HistoryPage: React.FC = () => {
           ))}
           <AuthDetails />
         </VStack>
+      )}</div>
 
         {/* Render your history page content here */}
         <Flex flex={1} justifyContent="center" alignItems="center" bg="gray.100">

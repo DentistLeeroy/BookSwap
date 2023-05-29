@@ -29,3 +29,9 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+@media screen and (min-width: 48em) {
+  .css-1g7zkn {
+    flex-direction: column!important;
+  }
+}

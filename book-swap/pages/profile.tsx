@@ -52,10 +52,16 @@ const ProfilePage: React.FC = () => {
   const [userBooks, setUserBooks] = useState<UserBook[]>([]);
   const [selectedPicture, setSelectedPicture] = useState<File | null>(null);
   const [isProfileUpdated, setIsProfileUpdated] = useState(false);
+  const [isNavigationOpen, setNavigationOpen] = useState(false);
+
 
 
   const handleNavItemClicked = (path: string) => {
     router.push(path);
+  };
+
+  const handleToggleNavigation = () => {
+    setNavigationOpen(!isNavigationOpen);
   };
 
   useEffect(() => {
@@ -314,8 +320,24 @@ const ProfilePage: React.FC = () => {
 
   return (
     <ChakraProvider>
-      <Flex>
-        <VStack align="flex-start" spacing={4} pr={8} borderRight="1px solid" borderColor="gray.200">
+      <Flex  direction={{ base: 'column', md: 'row' }}bg="#edf2f7" minH="100vh">
+      <Button onClick={handleToggleNavigation}>☰</Button> {/* Hamburger menu button */}
+    <div style={{ position: 'relative', zIndex: isNavigationOpen ? 1 : 'auto' }}>
+      {isNavigationOpen && (
+        <VStack
+          position="absolute"
+          top={0}
+          left={0}
+          align="flex-start"
+          spacing={4}
+          pr={8}
+          borderRight="1px solid"
+          borderColor="gray.200"
+          bg="white"
+          p={4}
+          height="100vh"
+          overflow="auto"
+        >
           {/* Render navigation */}
           {bottomNavItems.map((item) => (
             <Link
@@ -330,51 +352,79 @@ const ProfilePage: React.FC = () => {
           ))}
           <AuthDetails />
         </VStack>
+      )}</div>
 
-        <Box width="100vw" minHeight="100vh" display="flex" justifyContent="center" alignItems="center" bg="gray.100">
-          <Box maxH="100%">
-            <Heading as="h1" mb={4}>Your Profile</Heading>
-            <Box textAlign="center" mb={4}>
-  <div
-    style={{
-      borderRadius: '50%',
-      width: '200px',
-      height: '200px',
-      overflow: 'hidden',
-    }}
-  >
-    <img
-      src={userProfile?.pictureURL}
-      alt="avatar"
-      style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-    />
-  </div>
-</Box>
-
-
-
-            <Box mb={4}>
-              <Heading as="h2" size="md" mb={2}>Name</Heading>
-              <Input variant="outline" value={userProfile?.name} onChange={(e) => setUserProfile({ ...userProfile, name: e.target.value })} />
+<Box
+      width="100%"
+      minHeight="100vh"
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      bg="gray.100"
+    >
+      <Box maxH="100%" width={{ base: '100%', md: '80%' }} p={4}>
+        <Heading as="h1" mb={4} textAlign="center"> {/* Center align the text */}
+          Your Profile
+        </Heading>
+        <Box textAlign="center" mb={4}>
+          <div
+            style={{
+              borderRadius: '50%',
+              width: '200px',
+              height: '200px',
+              overflow: 'hidden',
+              margin: '0 auto' // Center align the avatar
+            }}
+          >
+                <img
+                  src={userProfile?.pictureURL}
+                  alt="avatar"
+                  style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                />
+              </div>
             </Box>
             <Box mb={4}>
-              <Heading as="h2" size="md" mb={2}>About me</Heading>
-              <Textarea variant="outline" minWidth="500px" value={userProfile?.description} onChange={(e) => setUserProfile({ ...userProfile, description: e.target.value })} />
+              <Heading as="h2" size="md" mb={2}>
+                Name
+              </Heading>
+              <Input
+                variant="outline"
+                value={userProfile?.name}
+                onChange={(e) => setUserProfile({ ...userProfile, name: e.target.value })}
+              />
             </Box>
-
             <Box mb={4}>
-              <Heading as="h2" size="md" mb={2}>Interests</Heading>
+              <Heading as="h2" size="md" mb={2}>
+                About me
+              </Heading>
+              <Textarea
+                variant="outline"
+                minWidth="500px"
+                value={userProfile?.description}
+                onChange={(e) => setUserProfile({ ...userProfile, description: e.target.value })}
+              />
+            </Box>
+            <Box mb={4}>
+              <Heading as="h2" size="md" mb={2}>
+                Interests
+              </Heading>
               <Box width="fit-content">
                 <Stack spacing={2}>
                   {userProfile?.interests.map((interest) => (
-                    <Box key={interest} bg="blue.500" style={{ color: "#202020", backgroundColor: theme.colors.customButton }} py={1} px={5} borderRadius="md">
+                    <Box
+                      key={interest}
+                      bg="blue.500"
+                      style={{ color: '#202020', backgroundColor: theme.colors.customButton }}
+                      py={1}
+                      px={5}
+                      borderRadius="md"
+                    >
                       {interest}
                     </Box>
                   ))}
                 </Stack>
               </Box>
             </Box>
-
             <Box mb={4}>
               <Heading as="h2" size="md" mb={2}>
                 Books on the shelf
@@ -382,8 +432,10 @@ const ProfilePage: React.FC = () => {
               <Box display="flex" flexWrap="wrap" justifyContent="center">
                 {userBooks.length > 0 ? (
                   userBooks.map((book) => (
-                    <Box key={book.title} display="inline-block" width="200px" mr={4} className=''>
-                      <Button variant="link" onClick={() => handleDeleteBook(book)}>X</Button>
+                    <Box key={book.title} display="inline-block" width="200px" mr={4} className="">
+                      <Button variant="link" onClick={() => handleDeleteBook(book)}>
+                        X
+                      </Button>
                       <img src={book.picture} alt={book.title} style={{ maxWidth: '100px' }} />
                       <Heading as="h3" size="sm" mt={2} maxWidth="50%">
                         {book.title}
@@ -392,25 +444,29 @@ const ProfilePage: React.FC = () => {
                         {book.author}
                       </Heading>
                     </Box>
-
                   ))
                 ) : (
                   <p>No books found.</p>
                 )}
               </Box>
             </Box>
-
             <Box mb={4}>
-              <Heading as="h2" size="md" mb={2}>Upload Book</Heading>
-              <Button colorScheme="blue" onClick={handleModalOpen}>Upload</Button>
+              <Heading as="h2" size="md" mb={2}>
+                Upload Book
+              </Heading>
+              <Button colorScheme="blue" onClick={handleModalOpen}>
+                Upload
+              </Button>
             </Box>
             {isProfileUpdated && (
-              <Alert status='success'>
+              <Alert status="success">
                 <AlertIcon />
                 Profile updated!
               </Alert>
             )}
-            <Button colorScheme="blue" onClick={handleSaveChanges}>Save Changes</Button>
+            <Button colorScheme="blue" onClick={handleSaveChanges}>
+              Save Changes
+            </Button>
           </Box>
         </Box>
 
@@ -427,7 +483,9 @@ const ProfilePage: React.FC = () => {
             bg="rgba(0, 0, 0, 0.5)"
           >
             <Box bg="white" p={4} borderRadius="md">
-              <Heading as="h2" size="md" mb={4}>Upload Book</Heading>
+              <Heading as="h2" size="md" mb={4}>
+                Upload Book
+              </Heading>
               <FormControl>
                 <FormLabel>Title</FormLabel>
                 <Input
@@ -450,13 +508,15 @@ const ProfilePage: React.FC = () => {
                   <MenuButton as={Button} variant="outline">
                     Select Genres
                   </MenuButton>
-                  <MenuList minWidth='240px' style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                  <MenuList minWidth="240px" style={{ maxHeight: '200px', overflowY: 'auto' }}>
                     <MenuOptionGroup title="Select Genres" type="checkbox">
                       {genres.map((genre) => (
                         <MenuItemOption
                           key={genre}
                           value={genre}
-                          onClick={() => setSelectedGenres((prevGenres) => [...prevGenres, genre])}
+                          onClick={() =>
+                            setSelectedGenres((prevGenres) => [...prevGenres, genre])
+                          }
                         >
                           {genre}
                         </MenuItemOption>
@@ -468,7 +528,12 @@ const ProfilePage: React.FC = () => {
               <Box mb={4}>
                 <FormControl mt={4}>
                   <FormLabel>Picture</FormLabel>
-                  <Input type="file" onChange={(e) => setSelectedPicture(e.target.files?.[0] || null)} />
+                  <Input
+                    type="file"
+                    onChange={(e) =>
+                      setSelectedPicture(e.target.files?.[0] || null)
+                    }
+                  />
                 </FormControl>
               </Box>
               <Button colorScheme="blue" mt={4} onClick={handleUpload}>
@@ -483,10 +548,6 @@ const ProfilePage: React.FC = () => {
       </Flex>
     </ChakraProvider>
   );
-
 };
 export default ProfilePage;
 
-function child(bookPicturesRef: StorageReference, userId: string) {
-  throw new Error('Function not implemented.');
-}
