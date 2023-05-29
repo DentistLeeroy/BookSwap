@@ -318,10 +318,10 @@ const ProfilePage: React.FC = () => {
 
             <Box mb={4}>
               <Heading as="h2" size="md" mb={2}>Interests</Heading>
-              <Box width="400px">
+              <Box width="fit-content">
                 <Stack spacing={2}>
                   {userProfile?.interests.map((interest) => (
-                    <Box key={interest} bg="blue.500" color="white" py={1} px={2} borderRadius="md" mb={2}>
+                    <Box key={interest} bg="blue.500" color="white" py={1} px={5} borderRadius="md">
                       {interest}
                     </Box>
                   ))}
@@ -333,7 +333,7 @@ const ProfilePage: React.FC = () => {
               <Heading as="h2" size="md" mb={2}>
                 Books on the shelf
               </Heading>
-              <Box display="flex" flexWrap="wrap">
+              <Box display="flex" flexWrap="wrap" justifyContent="center">
                 {userBooks.length > 0 ? (
                   userBooks.map((book) => (
                     <Box key={book.title} display="inline-block" width="200px" mr={4} className=''>
