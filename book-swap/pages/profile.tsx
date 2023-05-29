@@ -313,7 +313,7 @@ const ProfilePage: React.FC = () => {
             </Box>
             <Box mb={4}>
               <Heading as="h2" size="md" mb={2}>About me</Heading>
-              <Textarea variant="outline" value={userProfile?.description} onChange={(e) => setUserProfile({ ...userProfile, description: e.target.value })} />
+              <Textarea variant="outline" minWidth="500px" value={userProfile?.description} onChange={(e) => setUserProfile({ ...userProfile, description: e.target.value })} />
             </Box>
 
             <Box mb={4}>
