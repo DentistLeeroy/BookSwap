@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Button, Flex, FormControl, FormErrorMessage, FormLabel, Input, Stack } from '@chakra-ui/react';
 import { ChakraProvider } from '@chakra-ui/react';
+import theme from '@/app/chakra.theme';
 import { useForm } from 'react-hook-form';
 import { Auth, getAuth, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
 import AuthDetails from '../app/firebase/server/AuthDetails';
@@ -47,7 +48,7 @@ const LoginPage = () => {
   };
 
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
       <Flex width="100vw" height="100vh" justifyContent="center" alignItems="center" bg="gray.100">
         <Box bg="white" p={8} borderRadius="md" boxShadow="lg">
           <AuthDetails /><br></br>
@@ -77,13 +78,14 @@ const LoginPage = () => {
 
               {loginError && <p style={{ color: 'red' }}>{loginError}</p>}
 
-              <Button type="submit" colorScheme="blue" width="full">
-                Login
-              </Button>
+<Button type="submit" style={{ color: "#202020", backgroundColor: theme.colors.customButton }}>
+    Login
+</Button>
+<Button type="button" onClick={() => router.push('/signup')} style={{ color: "#FFFFFF", backgroundColor: theme.colors.signupButton }}>
+    SignUp
+</Button>
 
-              <Button type="button" onClick={() => router.push('/signup')} colorScheme="blue" width="full">
-                SignUp
-              </Button>
+
 
               <Stack spacing={4}>
                 <p>Email</p>
