@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { getAuth } from 'firebase/auth';
 import { Alert, AlertIcon, Box, ChakraProvider, Stack, Button, Heading, Menu, MenuButton, MenuList, MenuItemOption, MenuOptionGroup, FormControl, FormLabel, Input, VStack, Link, Flex, Textarea } from '@chakra-ui/react';
 import { getDoc, getFirestore, collection, doc, setDoc, getDocs } from 'firebase/firestore';
-import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
+import { getDownloadURL, getStorage, ref, uploadBytesResumable, listAll } from 'firebase/storage';
 import useRequireAuth from '../utils/useRequireAuth';
 import AuthDetails from '@/app/firebase/server/AuthDetails';
 
@@ -62,9 +62,21 @@ const ProfilePage: React.FC = () => {
           const firestore = getFirestore();
           const userDocRef = doc(firestore, 'userProfiles', userId);
           const userDocSnap = await getDoc(userDocRef);
-
+    
           if (userDocSnap.exists()) {
             const userProfileData = userDocSnap.data() as UserProfile;
+            
+            // Fetch profile picture URL from Firebase Storage
+            const storage = getStorage();
+            const profilePicturesRef = ref(storage, `profilePictures/${userId}`);
+            const profilePicturesList = await listAll(profilePicturesRef);
+            
+            if (profilePicturesList.items.length > 0) {
+              const imageFile = profilePicturesList.items[0]; // Fetch the first image file
+              const profilePictureUrl = await getDownloadURL(imageFile);
+              userProfileData.pictureURL = profilePictureUrl; // Add the profile picture URL to the userProfileData object
+            }
+    
             setUserProfile(userProfileData);
             localStorage.setItem('userProfile', JSON.stringify(userProfileData));
           }
@@ -73,6 +85,8 @@ const ProfilePage: React.FC = () => {
         console.error('Error fetching user profile:', error);
       }
     };
+    
+  
 
 
     const fetchUserBooks = async () => {
@@ -302,10 +316,24 @@ const ProfilePage: React.FC = () => {
         <Box width="100vw" minHeight="100vh" display="flex" justifyContent="center" alignItems="center" bg="gray.100">
           <Box maxH="100%">
             <Heading as="h1" mb={4}>Your Profile</Heading>
-
             <Box textAlign="center" mb={4}>
-              <img src="/images/tyler.png" alt="avatar" />
-            </Box>
+  <div
+    style={{
+      borderRadius: '50%',
+      width: '200px',
+      height: '200px',
+      overflow: 'hidden',
+    }}
+  >
+    <img
+      src={userProfile?.pictureURL}
+      alt="avatar"
+      style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+    />
+  </div>
+</Box>
+
+
 
             <Box mb={4}>
               <Heading as="h2" size="md" mb={2}>Name</Heading>
