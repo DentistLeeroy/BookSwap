@@ -12,7 +12,7 @@ const useRequireAuth = () => {
       if (user) {
         setUser(user);
       } else {
-        router.push('/'); // Adjust the login route if necessary
+        router.push('/');
       }
     });
 

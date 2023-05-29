@@ -134,9 +134,9 @@ const HomePage: React.FC = () => {
             <Flex direction="column" alignItems="center">
               {currentBook && (
                 <>
-                  <Image src={currentBook.image} alt={currentBook.title} width={89} height={134} objectFit="cover" borderRadius="md" />
+                  <Image src={currentBook.image} width={89} height={134} objectFit="cover" borderRadius="md" />
                   <VStack spacing={4} mt={4}>
-                    <Text fontSize="2xl" color={'gray.100'}>{currentBook.title}</Text>
+                    <Text fontSize="2xl" color={'gray.100'}></Text>
                     <Flex>
                       <Button
                         onClick={handleLike}
