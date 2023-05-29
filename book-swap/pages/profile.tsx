@@ -7,6 +7,7 @@ import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/
 import useRequireAuth from '../utils/useRequireAuth';
 import AuthDetails from '@/app/firebase/server/AuthDetails';
 
+
 type BottomNavItem = {
   label: string;
   path: string;
@@ -332,13 +333,13 @@ const ProfilePage: React.FC = () => {
               <Heading as="h2" size="md" mb={2}>
                 Books on the shelf
               </Heading>
-              <Box overflowX="auto" whiteSpace="nowrap">
+              <Box display="flex" flexWrap="wrap">
                 {userBooks.length > 0 ? (
                   userBooks.map((book) => (
-                    <Box key={book.title} display="inline-block" width="200px" mr={4}>
+                    <Box key={book.title} display="inline-block" width="200px" mr={4} className=''>
                       <Button variant="link" onClick={() => handleDeleteBook(book)}>X</Button>
                       <img src={book.picture} alt={book.title} style={{ maxWidth: '100px' }} />
-                      <Heading as="h3" size="sm" mt={2}>
+                      <Heading as="h3" size="sm" mt={2} maxWidth="50%">
                         {book.title}
                       </Heading>
                       <Heading as="h4" size="xs" mt={1}>
