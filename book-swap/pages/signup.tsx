@@ -1,20 +1,20 @@
 import { Box, Button, Checkbox, VStack, FormControl, FormErrorMessage, Menu, MenuButton, MenuList, MenuItem, FormLabel, Input, Stack, Text, Textarea, Select, CheckboxGroup, MenuItemOption, MenuOptionGroup, Divider, MenuDivider } from '@chakra-ui/react';
 import { ChakraProvider } from '@chakra-ui/react';
-import { useForm } from 'react-hook-form';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { createUserWithEmailAndPassword, getAuth, fetchSignInMethodsForEmail } from "firebase/auth";
 import { firestore, collection, getDocs, doc, setDoc } from "../app/firebase/server/firebase";
 import router, { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { ChangeEventHandler, useEffect, useState } from 'react';
 import { getStorage, ref, uploadBytes } from 'firebase/storage';
 
 const SignUp = () => {
-  const [genres, setGenres] = useState([]); // State variable to store genres
-  const [selectedGenres, setSelectedGenres] = useState([]); // State variable to store selected genres
-  const [profilePicture, setProfilePicture] = useState(null); // State variable to store the uploaded profile picture
+  const [genres, setGenres] = useState<string[]>([]);
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);  
+  const [profilePicture, setProfilePicture] = useState<File | null>(null);
 
   const router = useRouter(); // Access the router object from Next.js
 
-  const { handleSubmit, register, formState: { errors }, setError, clearErrors } = useForm(); // Form handling using react-hook-form
+  const { handleSubmit, register, formState: { errors }, setError, clearErrors } = useForm<{ email: string; password: string; profileName: string; profileDescription: string; }>();
 
   useEffect(() => {
     // Fetch book genres when the component mounts
@@ -28,18 +28,21 @@ const SignUp = () => {
     setGenres(bookGenres); // Update the genres state with the fetched book genres
   };
 
-  const handleProfilePictureChange = (e) => {
-    const file = e.target.files[0];
-    setProfilePicture(file);
+  const handleProfilePictureChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    const file = e.target.files?.[0];
+    setProfilePicture(file ?? null);
   };
-
-  const uploadProfilePicture = async (userId) => {
-    const storage = getStorage(); // Get the Firebase Storage instance
-    const storageRef = ref(storage, `profilePictures/${userId}/${profilePicture.name}`); // Reference to the storage location for the profile picture
-    await uploadBytes(storageRef, profilePicture); // Upload the file to Firebase Storage
+  
+  const uploadProfilePicture = async (userId: string) => {
+    if (profilePicture) {
+      const storage = getStorage();
+      const storageRef = ref(storage, `profilePictures/${userId}/${profilePicture.name}`);
+      await uploadBytes(storageRef, profilePicture);
+    }
   };
+  
 
-  const onSubmit = async (data) => {
+  const onSubmit: SubmitHandler<{ email: string; password: string; profileName: string; profileDescription: string; }> = async (data) => {
     const { email, password, profileName, profileDescription } = data; // Destructure form data
     const authInstance = getAuth(); // Get the authentication instance from Firebase
     try {

@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import Lottie from 'react-lottie';
+import Lottie, { useLottie } from "lottie-react";
 import animationData from '../public/animation.json';
 import { Button, Stack, ChakraProvider, Flex } from '@chakra-ui/react';
 import theme from '@/app/chakra.theme';
@@ -16,14 +16,12 @@ const WelcomePage = () => {
     router.push('/signup');
   };
 
-  const lottieOptions = {
-    loop: true,
-    autoplay: true,
+  const options = {
     animationData: animationData,
-    rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice',
-    },
+    loop: true
   };
+  
+  const { View } = useLottie(options);
 
   return (
     <ChakraProvider theme={theme}>
@@ -36,9 +34,9 @@ const WelcomePage = () => {
           BookSwap
         </p>
 
-        <div style={{ textAlign: 'center' }}>
-          <Lottie options={lottieOptions} height={350} width={400} />
-        </div>
+        <div style={{ textAlign: 'center', width: '400px', height: '400px', margin: '0 auto' }}>
+            <Lottie animationData={options.animationData} loop={options.loop} width="100%" height="100%" />
+          </div>
           <div style={{ textAlign: 'center', fontFamily: 'Lato', fontSize: '18px' }}>
             <p>Interested in finding your next book?</p>
             <div>

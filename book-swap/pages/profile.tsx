@@ -22,14 +22,13 @@ const bottomNavItems: BottomNavItem[] = [
 ];
 
 type UserProfile = {
-  pictureURL: string;
+  pictureURL?: string;
   name: string;
   description: string;
   interests: string[];
 };
 
 type UserBook = {
-  id: any;
   title: string;
   author: string;
   genres: string[];
@@ -86,7 +85,10 @@ const ProfilePage: React.FC = () => {
               userProfileData.pictureURL = profilePictureUrl; // Add the profile picture URL to the userProfileData object
             }
     
-            setUserProfile(userProfileData);
+            setUserProfile({
+              ...userProfileData,
+              description: userProfileData.description || '',
+            });            
             localStorage.setItem('userProfile', JSON.stringify(userProfileData));
           }
         }
@@ -288,18 +290,25 @@ const ProfilePage: React.FC = () => {
     }
   };
   
-
   const handleSaveChanges = async () => {
+    if (!userId || !userProfile) {
+      return;
+    }
+
     try {
       const firestore = getFirestore();
       const userDocRef = doc(firestore, 'userProfiles', userId);
-      await setDoc(userDocRef, userProfile);
+      await setDoc(userDocRef, {
+        ...userProfile,
+        description: userProfile.description || '',
+      });
 
       setIsProfileUpdated(true);
     } catch (error) {
       console.error('Error saving changes:', error);
     }
-  };
+};
+
 
   useEffect(() => {
     if (isProfileUpdated) {
@@ -313,9 +322,10 @@ const ProfilePage: React.FC = () => {
 
 
 
-  if (!currentUser) {
+  if (!currentUser || !userId) {
     return <div>Loading...</div>;
   }
+  
 
 
   return (
@@ -390,8 +400,16 @@ const ProfilePage: React.FC = () => {
               <Input
                 variant="outline"
                 value={userProfile?.name}
-                onChange={(e) => setUserProfile({ ...userProfile, name: e.target.value })}
-              />
+                onChange={(e) => {
+                  if (userProfile) {
+                    setUserProfile({
+                      ...userProfile,
+                      name: e.target.value,
+                    });
+                   }
+                 }}
+                isDisabled={!userProfile}
+                />
             </Box>
             <Box mb={4}>
               <Heading as="h2" size="md" mb={2}>
@@ -401,8 +419,16 @@ const ProfilePage: React.FC = () => {
                 variant="outline"
                 minWidth="500px"
                 value={userProfile?.description}
-                onChange={(e) => setUserProfile({ ...userProfile, description: e.target.value })}
-              />
+                onChange={(e) => {
+                  if (userProfile) {
+                    setUserProfile({
+                      ...userProfile,
+                      name: e.target.value,
+                    });
+                   }
+                 }}
+                isDisabled={!userProfile}
+                />
             </Box>
             <Box mb={4}>
               <Heading as="h2" size="md" mb={2}>

@@ -16,7 +16,8 @@ const LoginPage = () => {
     handleSubmit,
     register,
     formState: { errors },
-  } = useForm();
+  } = useForm<{ email: string; password: string }>(); // Specify the generic type argument here
+  
 
   const [loginError, setLoginError] = useState('');
   const [resetEmail, setResetEmail] = useState('');
