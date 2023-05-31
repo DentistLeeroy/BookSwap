@@ -65,7 +65,7 @@ const LoginPage = () => {
                 />
                 <FormErrorMessage>{errors.email && errors.email.message}</FormErrorMessage>
               </FormControl>
-
+  
               <FormControl isInvalid={!!errors.password} isRequired>
                 <FormLabel>Password</FormLabel>
                 <Input
@@ -76,18 +76,16 @@ const LoginPage = () => {
                 />
                 <FormErrorMessage>{errors.password && errors.password.message}</FormErrorMessage>
               </FormControl>
-
+  
               {loginError && <p style={{ color: 'red' }}>{loginError}</p>}
-
-<Button type="submit" style={{ color: "#202020", backgroundColor: theme.colors.customButton }}>
-    Login
-</Button>
-<Button type="button" onClick={() => router.push('/signup')} style={{ color: "#FFFFFF", backgroundColor: theme.colors.signupButton }}>
-    SignUp
-</Button>
-
-
-
+  
+              <Button type="submit" style={{ color: "#202020", backgroundColor: theme.colors.customButton }}>
+                Login
+              </Button>
+              <Button type="button" onClick={() => router.push('/signup')} style={{ color: "#FFFFFF", backgroundColor: theme.colors.signupButton }}>
+                SignUp
+              </Button>
+  
               <Stack spacing={4}>
                 <p>Email</p>
                 <Input
@@ -103,11 +101,10 @@ const LoginPage = () => {
               </Stack>
             </Stack>
           </form>
-
         </Box>
       </Flex>
     </ChakraProvider>
-  );
+  );  
 };
 
 export default LoginPage;

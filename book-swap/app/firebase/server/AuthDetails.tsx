@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { Box, Button } from "@chakra-ui/react";
 
 const AuthDetails = () => {
-  // Component state variables
+  // Component initializing state variables
   const [authUser, setAuthUser] = useState<User | null>(null);
   const [userID, setUserID] = useState<string | null>(null);
   const router = useRouter();
@@ -14,10 +14,10 @@ const AuthDetails = () => {
   // useEffect hook to listen for authentication state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
+      if (user) { //exists
         setAuthUser(user);
         setUserID(user.uid);
-      } else {
+      } else { // do not exist
         setAuthUser(null);
         setUserID(null);
       }
